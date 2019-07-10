@@ -80,12 +80,14 @@ export class Randomizer {
         c3: c3Prime,
         T: TPrime,
         C: {
-          ...c.C, // TODO: randomize
           C_r: C_rPrime,
+          C_2m: c.C.C_2m, // TODO: randomize
+          C_2m_square: c.C.C_2m_square, // TODO: randomize
         },
         pi: {
-          ...c.pi, // TODO: randomize
           pi_r: pi_rPrime,
+          pi_m: c.pi.pi_m, // TODO: randomize
+          pi_M: c.pi.pi_M, // TODO: randomize
           pi_T: pi_TPrime,
           pi_V: pi_VPrime,
         },

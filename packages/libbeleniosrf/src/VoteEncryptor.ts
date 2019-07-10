@@ -31,20 +31,21 @@ export interface EncryptedVoteMeta {
 export interface GSProofs {
   /** Commitments */
   readonly C: {
+    /** The commitment on r */
+    readonly C_r: B2;
     /** C_2m[i] is the commitment on m[i] in G_2, with i = 0, ..., k-1 */
     readonly C_2m: readonly B2[];
     /** C_2m_square[i] is the commitment on m[i]^2 in G_2, with i = 0, ..., k-1 */
     readonly C_2m_square: readonly B2[];
-    /** The commitment on r */
-    readonly C_r: B2;
   };
   /** Proofs. In here we use the BeleniosRF notation, where pi is the full proof, including pi and theta from the GS paper */
   readonly pi: {
-    readonly pi_V: ThetaOnly;
     readonly pi_r: ThetaOnly;
-    readonly pi_T: ThetaOnly;
-    readonly pi_M: ThetaOnly;
+    /** Proves that each element in m is a bit */
     readonly pi_m: ThetaOnly[];
+    readonly pi_M: ThetaOnly;
+    readonly pi_T: ThetaOnly;
+    readonly pi_V: ThetaOnly;
   };
 }
 
@@ -171,16 +172,16 @@ export class VoteEncryptor {
 
     return {
       C: {
+        C_r: C_r,
         C_2m: C_2m,
         C_2m_square: C_2m_square,
-        C_r: C_r,
       },
       pi: {
         pi_r: pi_r,
+        pi_m: pi_m,
+        pi_M: pi_M,
         pi_V: pi_V,
         pi_T: pi_T,
-        pi_M: pi_M,
-        pi_m: pi_m,
       },
     };
   }
