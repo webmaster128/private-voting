@@ -1,0 +1,4 @@
+extends: ../../../.eslintrc.yml
+rules:
+  "@typescript-eslint/camelcase": off
+  "@typescript-eslint/class-name-casing": off

@@ -1,0 +1,23 @@
+{
+  "name": "libbeleniosrf",
+  "description": "An implementation of the BeleniosRF voting scheme",
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "license": "Apache-2.0",
+  "scripts": {
+    "lint:fix": "eslint './{lib,src}/*.ts' --fix",
+    "lint": "eslint './{lib,src}/*.ts'",
+    "generate": "./build_module.py",
+    "postgenerate": "prettier --write --loglevel warn './lib/**/*.js'",
+    "format": "prettier --write --loglevel warn './{lib,src}/*.ts'",
+    "prebuild": "yarn format",
+    "build": "rm -rf build && tsc",
+    "watch": "rm -rf build && nice -n 19 tsc --watch",
+    "test": "jest --rootDir ./build",
+    "test-watch": "nice -n 19 jest --watch --rootDir ./build"
+  },
+  "dependencies": {
+    "amcl-js": "^0.0.0"
+  }
+}
