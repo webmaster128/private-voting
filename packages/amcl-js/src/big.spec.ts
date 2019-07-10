@@ -1,6 +1,6 @@
 import { randomBytes } from "crypto";
 
-import { CTX } from "../lib";
+import { CTX } from "..";
 
 describe("BIG", () => {
   const ctx = new CTX("ED25519");

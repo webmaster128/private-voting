@@ -1,4 +1,4 @@
-import { CTX } from "../lib";
+import { CTX } from "..";
 
 describe("AES", () => {
   const ctx = new CTX("ED25519");

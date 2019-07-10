@@ -1,4 +1,4 @@
-import { CTX } from "../lib";
+import { CTX } from "..";
 import { makeGeneratorsPF12 } from "./util";
 
 describe("ECP2Static", () => {

@@ -1,4 +1,4 @@
-import { CTX } from "../lib";
+import { CTX } from "..";
 
 describe("DBIGStatic", () => {
   const ctx = new CTX("ED25519");

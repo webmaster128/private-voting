@@ -1,4 +1,4 @@
-import { CTX } from "../lib";
+import { CTX } from "..";
 
 describe("FP12", () => {
   // add, sub not yet implemented

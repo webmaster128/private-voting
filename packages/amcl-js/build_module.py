@@ -59,7 +59,7 @@ with tempfile.TemporaryDirectory() as tmpdir:
 
     for path in [os.path.join(checkout_path, rel) for rel in sources]:
         base = os.path.basename(path)
-        outpath = "lib/amcl3/{}".format(base)
+        outpath = "lib/{}".format(base)
         with open(path) as infile, open(outpath, "w") as outfile:
             # Copy infile to outfile. Currently no updates needed but this is the place to do them
             for line in infile:

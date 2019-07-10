@@ -1,4 +1,4 @@
-import { CTX } from "../lib";
+import { CTX } from "..";
 
 describe("UInt64", () => {
   const ctx = new CTX("ED25519");

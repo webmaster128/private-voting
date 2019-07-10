@@ -1,4 +1,4 @@
-import { CTX } from "../lib";
+import { CTX } from "..";
 import { makeGeneratorsPF3 } from "./util";
 
 describe("PAIR192Static", () => {

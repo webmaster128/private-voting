@@ -1,8 +1,8 @@
 {
   "name": "amcl-js",
   "version": "0.0.0",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "lib/ctx.js",
+  "types": "types/index.d.ts",
   "license": "Apache-2.0",
   "scripts": {
     "lint:fix": "eslint './{lib,src}/*.ts' --fix",

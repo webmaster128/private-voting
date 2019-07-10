@@ -1,6 +1,6 @@
 // methods in this file are basic helpers that should be integrated upstream sooner or later
 
-import { CTXWithCurvePF3, CTXWithCurvePF4, CTXWithCurvePF12, ECP, ECP2, ECP4, ECP8 } from "../lib";
+import { CTXWithCurvePF3, CTXWithCurvePF4, CTXWithCurvePF12, ECP, ECP2, ECP4, ECP8 } from "..";
 
 export function makeGeneratorsPF12(ctx: CTXWithCurvePF12): { g1: ECP; g2: ECP2 } {
   const g1 = new ctx.ECP();

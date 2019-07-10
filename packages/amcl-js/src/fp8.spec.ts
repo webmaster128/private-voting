@@ -1,4 +1,4 @@
-import { CTX } from "../lib";
+import { CTX } from "..";
 
 describe("FP8", () => {
   const ctx = new CTX("BLS24");
