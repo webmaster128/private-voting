@@ -20,7 +20,7 @@ export class Randomizer {
 
   public randomize(upk: UserVerificationKey, { c, sigma }: Ballot): Ballot {
     const { c1, c2, c3, T, C } = c;
-    const { pi_r, pi_T } = c.pi;
+    const { pi_r, pi_T, pi_V } = c.pi;
     const { sigma1, sigma2, sigma3, sigma4, sigma5 } = sigma;
     const { P } = this.election.epk;
 
@@ -70,6 +70,8 @@ export class Randomizer {
 
     const pi_rPrime = this.randomizedProof(pi_r, [g1], [rand]);
     const pi_TPrime = this.randomizedProof(pi_T, [upk.X1], [rand]);
+    const Hvk = this.election.H(serializeVerificationKey(upk));
+    const pi_VPrime = this.randomizedProof(pi_V, [Hvk], [rand]);
 
     return {
       c: {
@@ -85,6 +87,7 @@ export class Randomizer {
           ...c.pi, // TODO: randomize
           pi_r: pi_rPrime,
           pi_T: pi_TPrime,
+          pi_V: pi_VPrime,
         },
       },
       sigma: {

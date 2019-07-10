@@ -56,11 +56,11 @@ export class BallotVerifier {
     // X1^r == T
     if (!this.epk.gs.verifyMultiScalarLinear1([vk.X1], [C.C_r], T, pi_T)) return false;
 
-    if (!verifyAll) return true; // stop early
-
     // H(vk)^r == c3
     const Hvk = this.election.H(serializeVerificationKey(vk));
     if (!this.epk.gs.verifyMultiScalarLinear1([Hvk], [C.C_r], c3, pi_V)) return false;
+
+    if (!verifyAll) return true; // stop early
 
     // u0 * u1^m1 * … * uk^mk * P^r == c2
     {
