@@ -50,11 +50,4 @@ export class Rng {
     const r = this.makeFactor();
     return g2.mul(r);
   }
-
-  /**
-   * @deprecated replace with something more explicit
-   */
-  public makeFp(): FP {
-    return new ctx.FP(ctx.BIG.randomnum(n, this.rng));
-  }
 }

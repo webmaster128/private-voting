@@ -8,7 +8,7 @@ describe("Rng", () => {
 
   it("produces non-constant values", () => {
     const rng = new Rng(defaultSeed);
-    const values = [rng.makeFp(), rng.makeFp(), rng.makeFp()];
+    const values = [rng.makeFactor(), rng.makeFactor(), rng.makeFactor()];
     expect(values[0]).not.toEqual(values[1]);
     expect(values[1]).not.toEqual(values[2]);
     expect(values[2]).not.toEqual(values[0]);
@@ -17,9 +17,9 @@ describe("Rng", () => {
   it("is deterministic", () => {
     const rng1 = new Rng(defaultSeed);
     const rng2 = new Rng(defaultSeed);
-    expect(rng1.makeFp()).toEqual(rng2.makeFp());
-    expect(rng1.makeFp()).toEqual(rng2.makeFp());
-    expect(rng1.makeFp()).toEqual(rng2.makeFp());
+    expect(rng1.makeFactor()).toEqual(rng2.makeFactor());
+    expect(rng1.makeFactor()).toEqual(rng2.makeFactor());
+    expect(rng1.makeFactor()).toEqual(rng2.makeFactor());
   });
 
   describe("makeFactor", () => {
