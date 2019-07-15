@@ -65,6 +65,8 @@ export interface FP12 {
 }
 
 export interface FP12Static {
+  fromBytes(data: ArrayLike<byte>): FP12;
+
   /** Copy constructor */
   new (other: FP12): FP12;
   /** Create new instance from (a, b, c) */

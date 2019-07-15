@@ -1,4 +1,5 @@
 import { BIGSource } from "./big";
+import { byte } from "./byte";
 import { FP16 } from "./fp16";
 
 export interface FP48 {
@@ -40,6 +41,8 @@ export interface FP48 {
 }
 
 export interface FP48Static {
+  fromBytes(data: ArrayLike<byte>): FP48;
+
   /** Copy constructor */
   new (other: FP48): FP48;
   /** Create new instance from (a, b, c) */
