@@ -24,6 +24,8 @@ export class BallotVerifier {
     const { c1, c2 } = b.c;
     const { sigma1, sigma2, sigma3, sigma4, sigma5 } = b.sigma;
 
+    if (!this.verifyProofs(vk, b.c)) return false;
+
     // test e(σ1, g2) = e(c1, σ4) from Verify+ (3a)
     if (!e(sigma1, g2).equals(e(c1, sigma4))) return false;
 
@@ -35,9 +37,6 @@ export class BallotVerifier {
 
     // test e(σ5, g2) = e(P, σ4) from Verify+ (3c)
     if (!e(sigma5, g2).equals(e(P, sigma4))) return false;
-
-    // TODO: Move up as first check like in the BeleniosRF paper
-    if (!this.verifyProofs(vk, b.c)) return false;
 
     return true;
   }

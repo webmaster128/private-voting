@@ -2,7 +2,7 @@ import { BIG, ECP, ECP2, FP } from "amcl-js";
 
 import { constants } from "./constants";
 import { ElGamal1 } from "./ElGamal";
-import { CommonReferenceString, GrothSahai, SetupGS } from "./GrothSahai";
+import { GrothSahai, SetupGS } from "./GrothSahai";
 import { Message } from "./Message";
 import { Rng } from "./Rng";
 
@@ -21,8 +21,6 @@ export interface PP {
 export interface ElectionPubkey extends PP {
   readonly F: (m: Message) => ECP;
   readonly P: ECP;
-  /** TODO: Remove field once GrothSahai class provides all functionality */
-  readonly crs: CommonReferenceString;
   readonly h: {
     readonly h1: ECP;
     readonly h2: ECP;
@@ -100,7 +98,6 @@ export function makeElectionKeypair(rng: Rng, k: number): ElectionKeypair {
       F: F,
       ...pp,
       ...elgamalKeypair.pk,
-      crs: crs,
       h: makeH(rng),
       gs: new GrothSahai(crs),
     },
