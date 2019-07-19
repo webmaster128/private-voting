@@ -22,7 +22,7 @@
     "eslint-plugin-simple-import-sort": "^4.0.0",
     "jest": "^24.7.1",
     "lerna": "^3.15.0",
-    "prettier": "^1.17.0",
+    "prettier": "^1.18.2",
     "typescript": "~3.5"
   }
 }
