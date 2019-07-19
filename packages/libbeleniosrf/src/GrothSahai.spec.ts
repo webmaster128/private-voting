@@ -15,6 +15,52 @@ describe("GrothSahai", () => {
     expect(gs).toBeTruthy();
   });
 
+  describe("commitScalarInG1", () => {
+    it("commits scalars in G1 by ElGamal-encrypting g1*x", () => {
+      const r = rng.makeFactor();
+
+      const x = rng.makeFactor(); // random scalar
+      const X = g1.mul(x);
+
+      const gs = new GrothSahai(crs);
+      const [commitment] = gs.commitScalarInG1([x], [r]);
+
+      // https://eprint.iacr.org/2007/155, 20160411:065033, page 24, "Commitments"
+      // (r + x*t)
+      const elGamalFactor = ctx.BIG.modmul(x, crs.u.t, n);
+      elGamalFactor.add(r);
+
+      const Q = crs.u.u1[1];
+      const { c1, c2 } = new ElGamal1().encrypt(Q, X, elGamalFactor);
+
+      expect(commitment[0].equals(c1)).toEqual(true);
+      expect(commitment[1].equals(c2)).toEqual(true);
+    });
+  });
+
+  describe("commitScalarInG2", () => {
+    it("commits scalars in G2 by ElGamal-encrypting g2*x", () => {
+      const r = rng.makeFactor();
+
+      const x = rng.makeFactor(); // random scalar
+      const X = g2.mul(x);
+
+      const gs = new GrothSahai(crs);
+      const [commitment] = gs.commitScalarInG2([x], [r]);
+
+      // https://eprint.iacr.org/2007/155, 20160411:065033, page 24, "Commitments"
+      // (r + x*t)
+      const elGamalFactor = ctx.BIG.modmul(x, crs.v.t, n);
+      elGamalFactor.add(r);
+
+      const Q = crs.v.v1[1];
+      const { c1, c2 } = new ElGamal2().encrypt(Q, X, elGamalFactor);
+
+      expect(commitment[0].equals(c1)).toEqual(true);
+      expect(commitment[1].equals(c2)).toEqual(true);
+    });
+  });
+
   describe("commitElementInG1", () => {
     it("commits elements in G1 by ElGamal-encrypting them", () => {
       const [r1, r2] = rng.makeFactors(2);
