@@ -1,6 +1,6 @@
 # Private voting
 
-This repository containf a JavaScript implementation of the BeleniosRF e-voting
+This repository contains a JavaScript implementation of the BeleniosRF e-voting
 scheme.
 
 ## License
