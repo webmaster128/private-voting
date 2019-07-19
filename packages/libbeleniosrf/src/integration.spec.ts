@@ -26,7 +26,7 @@ describe("Belenios RF integrationtest", () => {
     expect(ctx.ECP.CURVETYPE).toEqual(ctx.ECP.WEIERSTRASS);
   });
 
-  it("can init crypto", () => {
+  it("can do the full flow described in the paper", () => {
     const rng = new Rng(defaultSeed);
 
     const k = 2;
