@@ -17,7 +17,7 @@ export class BallotVerifier {
     this.epk = election.epk;
   }
 
-  public verifyPlus(vk: UserVerificationKey, b: Ballot, verifyAll: boolean = true): boolean {
+  public verifyPlus(vk: UserVerificationKey, b: Ballot): boolean {
     const { P } = this.epk;
     const { z } = vk.pp;
     const { X2 } = vk;
@@ -37,16 +37,12 @@ export class BallotVerifier {
     if (!e(sigma5, g2).equals(e(P, sigma4))) return false;
 
     // TODO: Move up as first check like in the BeleniosRF paper
-    if (!this.verifyProofs(vk, b.c, verifyAll)) return false;
+    if (!this.verifyProofs(vk, b.c)) return false;
 
     return true;
   }
 
-  private verifyProofs(
-    vk: UserVerificationKey,
-    c: EncryptedVote & GSProofs,
-    verifyAll: boolean,
-  ): boolean {
+  private verifyProofs(vk: UserVerificationKey, c: EncryptedVote & GSProofs): boolean {
     const { pi_r, pi_V, pi_T, pi_M, pi_m } = c.pi;
     const { c1, c2, c3, C, T } = c;
 
@@ -59,8 +55,6 @@ export class BallotVerifier {
     // H(vk)^r == c3
     const Hvk = this.election.H(serializeVerificationKey(vk));
     if (!this.epk.gs.verifyMultiScalarLinear1([Hvk], [C.C_r], c3, pi_V)) return false;
-
-    if (!verifyAll) return true; // stop early
 
     // u0 * u1^m1 * … * uk^mk * P^r == c2
     {

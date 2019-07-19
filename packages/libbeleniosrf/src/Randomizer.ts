@@ -20,7 +20,7 @@ export class Randomizer {
 
   public randomize(upk: UserVerificationKey, { c, sigma }: Ballot): Ballot {
     const { c1, c2, c3, T, C } = c;
-    const { pi_r, pi_T, pi_V } = c.pi;
+    const { pi_r, pi_T, pi_V, pi_M } = c.pi;
     const { sigma1, sigma2, sigma3, sigma4, sigma5 } = sigma;
     const { P } = this.election.epk;
 
@@ -72,6 +72,7 @@ export class Randomizer {
     const pi_TPrime = this.randomizedProof(pi_T, [upk.X1], [rand]);
     const Hvk = this.election.H(serializeVerificationKey(upk));
     const pi_VPrime = this.randomizedProof(pi_V, [Hvk], [rand]);
+    const pi_MPrime = this.randomizedProof(pi_M, [this.election.epk.P], [rand]);
 
     return {
       c: {
@@ -81,13 +82,13 @@ export class Randomizer {
         T: TPrime,
         C: {
           C_r: C_rPrime,
-          C_2m: c.C.C_2m, // TODO: randomize
-          C_2m_square: c.C.C_2m_square, // TODO: randomize
+          C_2m: c.C.C_2m, // TODO: do we need to randomize this?
+          C_2m_square: c.C.C_2m_square, // TODO: do we need to randomize this?
         },
         pi: {
           pi_r: pi_rPrime,
-          pi_m: c.pi.pi_m, // TODO: randomize
-          pi_M: c.pi.pi_M, // TODO: randomize
+          pi_m: c.pi.pi_m, // TODO: do we need to randomize this?
+          pi_M: pi_MPrime,
           pi_T: pi_TPrime,
           pi_V: pi_VPrime,
         },
@@ -103,7 +104,7 @@ export class Randomizer {
   }
 
   /**
-   * Takes a proof of `T1 = A * r` and creates a proof for `T1' = A * (r+r')`
+   * Takes a proof of `T1 = X * r` and creates a proof for `T1' = X * r + A * r'`
    * by taking A and the randomnes used for comitting r'
    *
    * @param A a vector of elements in G1 (public) that is the same for the old and the new proof

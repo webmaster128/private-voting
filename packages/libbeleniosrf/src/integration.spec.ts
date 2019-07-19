@@ -51,9 +51,7 @@ describe("Belenios RF integrationtest", () => {
     const bPrime = randomizer.randomize(userKeypair.vk, b);
 
     expect(verifier.verifyPlus(userKeypair.vk, b)).toEqual(true);
-    // TODO: verify proofs as well.
-    // Randomizing proofs is not yet implemented. But the randomized ciphertexts/signatures work.
-    expect(verifier.verifyPlus(userKeypair.vk, bPrime, false)).toEqual(true);
+    expect(verifier.verifyPlus(userKeypair.vk, bPrime)).toEqual(true);
 
     const trustee = new Trustee(electionKeypair, k);
 
