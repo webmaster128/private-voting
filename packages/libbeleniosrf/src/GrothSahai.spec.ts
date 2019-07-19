@@ -1,5 +1,5 @@
 import { constants } from "./constants";
-import { ElGamal } from "./ElGamal";
+import { ElGamal1, ElGamal2 } from "./ElGamal";
 import { GrothSahai, SetupGS } from "./GrothSahai";
 import { e } from "./math";
 import { Rng } from "./Rng";
@@ -31,7 +31,7 @@ describe("GrothSahai", () => {
       elGamalFactor.add(r1);
 
       const Q = crs.u.u1[1];
-      const { c1, c2 } = ElGamal.encrypt(Q, X, elGamalFactor);
+      const { c1, c2 } = new ElGamal1().encrypt(Q, X, elGamalFactor);
 
       expect(commitment[0].equals(c1)).toEqual(true);
       expect(commitment[1].equals(c2)).toEqual(true);
@@ -54,7 +54,7 @@ describe("GrothSahai", () => {
       elGamalFactor.add(r1);
 
       const Q = crs.v.v1[1];
-      const { c1, c2 } = ElGamal.encrypt2(Q, X, elGamalFactor);
+      const { c1, c2 } = new ElGamal2().encrypt(Q, X, elGamalFactor);
 
       expect(commitment[0].equals(c1)).toEqual(true);
       expect(commitment[1].equals(c2)).toEqual(true);

@@ -5,14 +5,25 @@ import { Rng } from "./Rng";
 
 const { ctx, g1, g2 } = constants;
 
-/**
- * ElGamal on an elliptic curve
- */
-export class ElGamal {
+/** ElGamal on an elliptic curve */
+export interface ElGamal<Point extends ECP | ECP2> {
   /**
    * KeyGen as defined in 3.1, ElGamal Encryption
    */
-  public static keyGen(rng: Rng): { pk: { P: ECP }; dk: { d: FP } } {
+  keyGen(rng: Rng): { pk: { P: Point }; dk: { d: FP } };
+  /**
+   * ElGamal Encrypt
+   */
+  encrypt(P: Point, M: Point, r: BIG): { readonly c1: Point; readonly c2: Point };
+  /**
+   * ElGamal Decrypt
+   */
+  decrypt(d: FP, c1: Point, c2: Point): Point;
+}
+
+/** ElGamal on G1 */
+export class ElGamal1 implements ElGamal<ECP> {
+  public keyGen(rng: Rng): { pk: { P: ECP }; dk: { d: FP } } {
     const d = rng.makePointInZp();
     const P = g1.mul(d.f);
     return {
@@ -21,27 +32,8 @@ export class ElGamal {
     };
   }
 
-  public static keyGen2(rng: Rng): { pk: { P: ECP2 }; dk: { d: FP } } {
-    const d = rng.makePointInZp();
-    const P = g2.mul(d.f);
-    return {
-      pk: { P },
-      dk: { d },
-    };
-  }
-
-  /**
-   * ElGamal Encrypt
-   */
-  public static encrypt(P: ECP, M: ECP, r: BIG): { readonly c1: ECP; readonly c2: ECP } {
+  public encrypt(P: ECP, M: ECP, r: BIG): { readonly c1: ECP; readonly c2: ECP } {
     const c1 = g1.mul(r);
-    const c2 = P.mul(r);
-    c2.add(M);
-    return { c1, c2 };
-  }
-
-  public static encrypt2(P: ECP2, M: ECP2, r: BIG): { readonly c1: ECP2; readonly c2: ECP2 } {
-    const c1 = g2.mul(r);
     const c2 = P.mul(r);
     c2.add(M);
     return { c1, c2 };
@@ -53,15 +45,8 @@ export class ElGamal {
    * The only operation on eliptic curve points as represented as * in the paper and addition
    * in amcl. So `c2*c1^(-d) = c2/c1^d` is expressed as `c2-c1*d`.
    */
-  public static decrypt(d: FP, c1: ECP, c2: ECP): ECP {
+  public decrypt(d: FP, c1: ECP, c2: ECP): ECP {
     const out = new ctx.ECP();
-    out.copy(c2);
-    out.sub(c1.mul(d.f));
-    return out;
-  }
-
-  public static decrypt2(d: FP, c1: ECP2, c2: ECP2): ECP2 {
-    const out = new ctx.ECP2();
     out.copy(c2);
     out.sub(c1.mul(d.f));
     return out;
@@ -77,7 +62,7 @@ export class ElGamal {
    * @param messages the messages to be decrypted
    * @param messageGenerator a function that generates possible output messages
    */
-  public static decryptSum(
+  public decryptSum(
     d: FP,
     messages: readonly ({ c1: ECP; c2: ECP })[],
     messageGenerator: () => BIG | undefined,
@@ -90,7 +75,7 @@ export class ElGamal {
     }
 
     // this is g^(m_0 + m_1 + … + m_n-1)
-    const gm = ElGamal.decrypt(d, sumComponent1, sumComponent2);
+    const gm = this.decrypt(d, sumComponent1, sumComponent2);
 
     let msg: BIG | undefined;
     while ((msg = messageGenerator())) {
@@ -100,5 +85,31 @@ export class ElGamal {
     }
 
     return undefined;
+  }
+}
+
+/** ElGamal on G2 */
+export class ElGamal2 implements ElGamal<ECP2> {
+  public keyGen(rng: Rng): { pk: { P: ECP2 }; dk: { d: FP } } {
+    const d = rng.makePointInZp();
+    const P = g2.mul(d.f);
+    return {
+      pk: { P },
+      dk: { d },
+    };
+  }
+
+  public encrypt(P: ECP2, M: ECP2, r: BIG): { readonly c1: ECP2; readonly c2: ECP2 } {
+    const c1 = g2.mul(r);
+    const c2 = P.mul(r);
+    c2.add(M);
+    return { c1, c2 };
+  }
+
+  public decrypt(d: FP, c1: ECP2, c2: ECP2): ECP2 {
+    const out = new ctx.ECP2();
+    out.copy(c2);
+    out.sub(c1.mul(d.f));
+    return out;
   }
 }

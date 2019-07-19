@@ -1,7 +1,7 @@
 import { BIG, ECP, ECP2 } from "amcl-js";
 
 import { constants } from "./constants";
-import { ElGamal } from "./ElGamal";
+import { ElGamal1 } from "./ElGamal";
 import { B2, ThetaOnly } from "./GrothSahai";
 import { Message } from "./Message";
 import { PublicElection } from "./PublicElection";
@@ -96,7 +96,7 @@ export class VoteEncryptor {
     const r = this.rng.makeFactor();
 
     const FM = this.election.epk.F(m);
-    const { c1, c2 } = ElGamal.encrypt(this.election.epk.P, FM, r);
+    const { c1, c2 } = new ElGamal1().encrypt(this.election.epk.P, FM, r);
 
     // From paper:
     // vk = (pp, X_1 , X_2)

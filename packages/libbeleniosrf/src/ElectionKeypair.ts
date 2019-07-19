@@ -1,7 +1,7 @@
 import { BIG, ECP, ECP2, FP } from "amcl-js";
 
 import { constants } from "./constants";
-import { ElGamal } from "./ElGamal";
+import { ElGamal1 } from "./ElGamal";
 import { CommonReferenceString, GrothSahai, SetupGS } from "./GrothSahai";
 import { Message } from "./Message";
 import { Rng } from "./Rng";
@@ -93,7 +93,7 @@ function Setup(rng: Rng, k: number): { readonly F: (m: Message) => ECP; readonly
 export function makeElectionKeypair(rng: Rng, k: number): ElectionKeypair {
   const crs = SetupGS(rng);
   const { F, pp } = Setup(rng, k);
-  const elgamalKeypair = ElGamal.keyGen(rng);
+  const elgamalKeypair = new ElGamal1().keyGen(rng);
 
   return {
     pk: {

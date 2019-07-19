@@ -1,5 +1,5 @@
 import { ElectionDecryptionKey, ElectionKeypair, ElectionPubkey } from "./ElectionKeypair";
-import { ElGamal } from "./ElGamal";
+import { ElGamal1 } from "./ElGamal";
 import { intToMessage, Message } from "./Message";
 import { EncryptedVote } from "./VoteEncryptor";
 
@@ -22,7 +22,7 @@ export class Trustee {
   public decryptPlus(c: EncryptedVote): Message | null {
     // TODO: if pi not valid, return null
 
-    const F = ElGamal.decrypt(this.dk.d, c.c1, c.c2);
+    const F = new ElGamal1().decrypt(this.dk.d, c.c1, c.c2);
     for (const m of this.M) {
       if (this.pk.F(m).equals(F)) return m;
     }
