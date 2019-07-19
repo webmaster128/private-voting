@@ -17,10 +17,9 @@ describe("GrothSahai", () => {
 
   describe("commitElementInG1", () => {
     it("commits elements in G1 by ElGamal-encrypting them", () => {
-      const r1 = rng.makeFactor();
-      const r2 = rng.makeFactor();
+      const [r1, r2] = rng.makeFactors(2);
 
-      const X = g1.mul(rng.makeFactor());
+      const X = g1.mul(rng.makeFactor()); // random element in G1
 
       const gs = new GrothSahai(crs);
       const [commitment] = gs.commitElementInG1([X], [[r1, r2]]);
@@ -40,10 +39,9 @@ describe("GrothSahai", () => {
 
   describe("commitElementInG2", () => {
     it("commits elements in G2 by ElGamal-encrypting them", () => {
-      const r1 = rng.makeFactor();
-      const r2 = rng.makeFactor();
+      const [r1, r2] = rng.makeFactors(2);
 
-      const X = g2.mul(rng.makeFactor());
+      const X = g2.mul(rng.makeFactor()); // random element in G2
 
       const gs = new GrothSahai(crs);
       const [commitment] = gs.commitElementInG2([X], [[r1, r2]]);
