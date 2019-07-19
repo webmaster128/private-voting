@@ -1,12 +1,17 @@
 {
   "name": "private-voting-monorepo-root",
   "license": "Apache-2.0",
+  "author": {
+    "name": "Simon Warta",
+    "url": "https://github.com/webmaster128"
+  },
   "private": true,
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
     "format": "lerna run format",
+    "format-text": "prettier --write --prose-wrap always --print-width 80 \"./*.{md,txt}\" && lerna run format-text",
     "lint": "lerna run lint",
     "test": "lerna run test",
     "build": "lerna run build"
