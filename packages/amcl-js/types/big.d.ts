@@ -8,6 +8,16 @@ export interface BIG {
   zero(): this;
   /** set to one */
   one(): this;
+  /** Set word at position i */
+  get(i: number): number;
+  /** Set word at position i to x */
+  set(i: number, x: number): void;
+  /** test for zero */
+  iszilch(): boolean;
+  /** test for unity */
+  isunity(): boolean;
+  /** Conditional swap of two BIGs depending on d using XOR - no branches */
+  cswap(b: BIG, d: boolean): void;
   /** Conditional move of ctx.BIG depending on d using XOR - no branches */
   cmove(b: BIG, d: boolean): void;
   /** copy from another BIG */
