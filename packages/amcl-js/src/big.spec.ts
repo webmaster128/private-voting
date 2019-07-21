@@ -65,10 +65,13 @@ describe("BIG", () => {
       }
     });
 
-    it("throws when called on zero", () => {
-      pending("See https://github.com/miracl/amcl/issues/34");
+    it("errors when called on zero", () => {
       const a = new ctx.BIG(0);
-      expect(() => a.invmodp(p)).toThrowError(/division by zero/);
+      a.invmodp(p);
+      // In this case the value 0 indicates an error case. This is valid since 0
+      // is not an element of the multiplactive group.
+      // See https://github.com/miracl/amcl/issues/34#issuecomment-509573252
+      expect(a.iszilch()).toEqual(true);
     });
   });
 });
