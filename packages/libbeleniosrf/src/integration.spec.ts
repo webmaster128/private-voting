@@ -5,6 +5,7 @@ import { constants } from "./constants";
 import { makeElectionKeypair } from "./ElectionKeypair";
 import { Message } from "./Message";
 import { PublicElection } from "./PublicElection";
+import { Publisher } from "./Publisher";
 import { Randomizer } from "./Randomizer";
 import { Rng } from "./Rng";
 import { Trustee } from "./Trustee";
@@ -53,14 +54,16 @@ describe("Belenios RF integrationtest", () => {
     expect(verifier.verifyPlus(userKeypair.vk, b)).toEqual(true);
     expect(verifier.verifyPlus(userKeypair.vk, bPrime)).toEqual(true);
 
+    const publisher = new Publisher();
+    const pb = publisher.publish(b);
+
     const trustee = new Trustee(electionKeypair, k);
 
-    const decryptedB = trustee.decryptPlus(b.c);
+    const decryptedB = trustee.decryptPlus(b);
     expect(decryptedB).toEqual(m);
-    const decryptedBPrime = trustee.decryptPlus(bPrime.c);
+    const decryptedBPrime = trustee.decryptPlus(bPrime);
     expect(decryptedBPrime).toEqual(m);
-
-    // const json = JSON.stringify(b);
-    // console.log(json, json.length);
+    const decryptedPB = trustee.decryptPlus(pb);
+    expect(decryptedPB).toEqual(m);
   });
 });
