@@ -17,7 +17,7 @@
     "generate": "./build_module.py",
     "postgenerate": "prettier --write --loglevel warn './lib/**/*.js'",
     "format": "prettier --write --loglevel warn './{lib,src}/*.ts'",
-    "format-text": "prettier --write --prose-wrap always --print-width 80 \"./*.md\"",
+    "format-text": "prettier --write --prose-wrap always --print-width 80 \"./*.md\" \"docs/*.md\"",
     "build": "rm -rf build && tsc",
     "watch": "rm -rf build && nice -n 19 tsc --watch",
     "test": "jest --rootDir ./build",
