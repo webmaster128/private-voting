@@ -1,6 +1,6 @@
 import { BIG, ECP, ECP2 } from "amcl-js";
 import { ElGamal1, Rng } from "ecc";
-import { B2, range, ThetaOnly } from "groth-sahai";
+import { B2, ThetaOnly } from "groth-sahai";
 
 import { constants } from "./constants";
 import { Message } from "./Message";
@@ -53,6 +53,10 @@ export interface Sigma {
   readonly sigma3: ECP;
   readonly sigma4: ECP2;
   readonly sigma5: ECP;
+}
+
+function range(count: number): readonly number[] {
+  return Array.from({ length: count }).map((_, index) => index);
 }
 
 export class VoteEncryptor {

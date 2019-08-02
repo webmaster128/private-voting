@@ -11,4 +11,3 @@ export {
   Theta,
   ThetaOnly,
 } from "./GrothSahai";
-export { range } from "./utils";
