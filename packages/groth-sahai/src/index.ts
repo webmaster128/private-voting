@@ -13,5 +13,5 @@ export {
   Theta,
   ThetaOnly,
 } from "./GrothSahai";
-export { e, ee } from "./math";
+export { Pairings } from "./Pairings";
 export { makeGeneratorsPF12, range } from "./utils";

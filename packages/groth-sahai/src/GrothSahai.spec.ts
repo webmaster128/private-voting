@@ -2,7 +2,7 @@ import { CTX } from "amcl-js";
 
 import { ElGamal1, ElGamal2 } from "./ElGamal";
 import { GrothSahai, SetupGS } from "./GrothSahai";
-import { e } from "./math";
+import { Pairings } from "./Pairings";
 import { Rng } from "./Rng";
 import { makeGeneratorsPF12 } from "./utils";
 
@@ -126,6 +126,8 @@ describe("GrothSahai", () => {
   });
 
   describe("F", () => {
+    const pairings = new Pairings(ctx);
+
     it("works as expected via iota", () => {
       const X = g1.mul(rng.makeFactor());
       const Y = g2.mul(rng.makeFactor());
@@ -135,7 +137,7 @@ describe("GrothSahai", () => {
       expect(result[0][0].isunity()).toEqual(true);
       expect(result[0][1].isunity()).toEqual(true);
       expect(result[1][0].isunity()).toEqual(true);
-      expect(result[1][1].equals(e(ctx, X, Y))).toEqual(true);
+      expect(result[1][1].equals(pairings.e(X, Y))).toEqual(true);
     });
 
     it("works for arbitrary elements", () => {
@@ -146,10 +148,10 @@ describe("GrothSahai", () => {
 
       const gs = new GrothSahai(ctx, crs);
       const result = gs.F([X1, X2], [Y1, Y2]);
-      expect(result[0][0].equals(e(ctx, X1, Y1))).toEqual(true);
-      expect(result[0][1].equals(e(ctx, X1, Y2))).toEqual(true);
-      expect(result[1][0].equals(e(ctx, X2, Y1))).toEqual(true);
-      expect(result[1][1].equals(e(ctx, X2, Y2))).toEqual(true);
+      expect(result[0][0].equals(pairings.e(X1, Y1))).toEqual(true);
+      expect(result[0][1].equals(pairings.e(X1, Y2))).toEqual(true);
+      expect(result[1][0].equals(pairings.e(X2, Y1))).toEqual(true);
+      expect(result[1][1].equals(pairings.e(X2, Y2))).toEqual(true);
     });
 
     it("returns ones for infinity in one of the arguments", () => {
