@@ -1,6 +1,6 @@
 {
-  "name": "groth-sahai",
-  "description": "An implementation of the Groth-Sahai proof system (SXDH instantiation)",
+  "name": "ecc",
+  "description": "Elliptic Curve Cryptography",
   "version": "0.0.0",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -22,7 +22,6 @@
     "test-watch": "nice -n 19 jest --watch --rootDir ./build"
   },
   "dependencies": {
-    "amcl-js": "^0.0.0",
-    "ecc": "^0.0.0"
+    "amcl-js": "^0.0.0"
   }
 }

@@ -1,4 +1,4 @@
-import { ElGamal1 } from "groth-sahai";
+import { ElGamal1 } from "ecc";
 
 import { PublicBallot } from "./Ballot";
 import { constants } from "./constants";

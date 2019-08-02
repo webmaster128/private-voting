@@ -1,9 +1,8 @@
 import { BIG, CTXWithCurvePF12, ECP, ECP2 } from "amcl-js";
+import { makeGeneratorsPF12, Pairings, Rng } from "ecc";
 
 import { Fp12Matrices, FP12Matrix2x2 } from "./Fp12Matrices";
-import { Pairings } from "./Pairings";
-import { Rng } from "./Rng";
-import { makeGeneratorsPF12, range, same } from "./utils";
+import { range, same } from "./utils";
 
 /** Type of element in module B_1 = G1×G1 */
 export type B1 = readonly [ECP, ECP];

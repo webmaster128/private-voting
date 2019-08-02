@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { Rng } from "groth-sahai";
+import { Rng } from "ecc";
 
 import { Ballot } from "./Ballot";
 import { BallotVerifier } from "./BallotVerifier";

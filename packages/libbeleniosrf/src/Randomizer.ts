@@ -1,5 +1,6 @@
 import { BIG, ECP } from "amcl-js";
-import { B2, Rng, Theta, ThetaOnly } from "groth-sahai";
+import { Rng } from "ecc";
+import { B2, Theta, ThetaOnly } from "groth-sahai";
 
 import { Ballot } from "./Ballot";
 import { constants } from "./constants";
