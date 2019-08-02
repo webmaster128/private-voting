@@ -1,10 +1,7 @@
 import { CTX } from "amcl-js";
+import { ElGamal1, ElGamal2, makeGeneratorsPF12, Pairings, Rng } from "ecc";
 
-import { ElGamal1, ElGamal2 } from "./ElGamal";
 import { GrothSahai, SetupGS } from "./GrothSahai";
-import { Pairings } from "./Pairings";
-import { Rng } from "./Rng";
-import { makeGeneratorsPF12 } from "./utils";
 
 const ctx = new CTX("BN254CX");
 const { g1, g2 } = makeGeneratorsPF12(ctx);

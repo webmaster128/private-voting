@@ -1,5 +1,5 @@
 import { ECP, ECP2 } from "amcl-js";
-import { Rng } from "groth-sahai";
+import { Rng } from "ecc";
 
 import { PP } from "./ElectionKeypair";
 

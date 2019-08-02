@@ -1,5 +1,6 @@
 import { BIG, ECP, ECP2 } from "amcl-js";
-import { B2, ElGamal1, range, Rng, ThetaOnly } from "groth-sahai";
+import { ElGamal1, Rng } from "ecc";
+import { B2, range, ThetaOnly } from "groth-sahai";
 
 import { constants } from "./constants";
 import { Message } from "./Message";

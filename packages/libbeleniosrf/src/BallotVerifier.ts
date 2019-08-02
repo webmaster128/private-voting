@@ -1,4 +1,4 @@
-import { Pairings } from "groth-sahai";
+import { Pairings } from "ecc";
 
 import { Ballot } from "./Ballot";
 import { constants } from "./constants";
