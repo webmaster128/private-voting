@@ -1,6 +1,6 @@
 import { BIG, CTXWithCurvePF12, ECP, ECP2 } from "amcl-js";
 
-import { fp12MatricesAdd, fp12MatricesEqual, FP12Matrix2x2 } from "./math";
+import { Fp12Matrices, FP12Matrix2x2 } from "./Fp12Matrices";
 import { Pairings } from "./Pairings";
 import { Rng } from "./Rng";
 import { makeGeneratorsPF12, range, same } from "./utils";
@@ -404,6 +404,7 @@ export class GrothSahai {
     theta: Theta,
   ): boolean {
     const thisClass = this;
+    const fp12Matrices = new Fp12Matrices(this.ctx);
 
     /** dot for n = 1 */
     function dot1(x: B1, y: B2): FP12Matrix2x2 {
@@ -419,7 +420,7 @@ export class GrothSahai {
         const y = ys[index];
         return thisClass.F(x, y);
       });
-      return fp12MatricesAdd(thisClass.ctx, ...summands);
+      return fp12Matrices.add(...summands);
     }
 
     function iotaTildeT(Z: ECP): FP12Matrix2x2 {
@@ -444,14 +445,13 @@ export class GrothSahai {
     }
     // gamma is always 0 in our use case
 
-    const lhs = fp12MatricesAdd(this.ctx, ...lhsParts);
-    const rhs = fp12MatricesAdd(
-      this.ctx,
+    const lhs = fp12Matrices.add(...lhsParts);
+    const rhs = fp12Matrices.add(
       iotaTildeT(T1),
       dot([this.u1, this.u2], pi),
       this.F(theta, this.v1),
     );
 
-    return fp12MatricesEqual(lhs, rhs);
+    return fp12Matrices.equal(lhs, rhs);
   }
 }
