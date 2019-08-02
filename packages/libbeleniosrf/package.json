@@ -14,8 +14,6 @@
   "scripts": {
     "lint:fix": "eslint './{lib,src}/*.ts' --fix",
     "lint": "eslint './{lib,src}/*.ts'",
-    "generate": "./build_module.py",
-    "postgenerate": "prettier --write --loglevel warn './lib/**/*.js'",
     "format": "prettier --write --loglevel warn './{lib,src}/*.ts'",
     "format-text": "prettier --write --prose-wrap always --print-width 80 \"./*.md\" \"docs/*.md\"",
     "build": "rm -rf build && tsc",
@@ -24,6 +22,7 @@
     "test-watch": "nice -n 19 jest --watch --rootDir ./build"
   },
   "dependencies": {
-    "amcl-js": "^0.0.0"
+    "amcl-js": "^0.0.0",
+    "groth-sahai": "^0.0.0"
   }
 }

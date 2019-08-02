@@ -1,9 +1,7 @@
-import { BIG, ECP, ECP2, FP } from "amcl-js";
+import { BIG, CTXWithCurvePF12, ECP, ECP2, FP } from "amcl-js";
 
-import { constants } from "./constants";
 import { Rng } from "./Rng";
-
-const { ctx, g1, g2 } = constants;
+import { makeGeneratorsPF12 } from "./utils";
 
 /** ElGamal on an elliptic curve */
 export interface ElGamal<Point extends ECP | ECP2> {
@@ -23,9 +21,17 @@ export interface ElGamal<Point extends ECP | ECP2> {
 
 /** ElGamal on G1 */
 export class ElGamal1 implements ElGamal<ECP> {
+  private readonly ctx: CTXWithCurvePF12;
+  private readonly g1: ECP;
+
+  public constructor(ctx: CTXWithCurvePF12) {
+    this.ctx = ctx;
+    this.g1 = makeGeneratorsPF12(ctx).g1;
+  }
+
   public keyGen(rng: Rng): { pk: { P: ECP }; dk: { d: FP } } {
     const d = rng.makePointInZp();
-    const P = g1.mul(d.f);
+    const P = this.g1.mul(d.f);
     return {
       pk: { P },
       dk: { d },
@@ -33,7 +39,7 @@ export class ElGamal1 implements ElGamal<ECP> {
   }
 
   public encrypt(P: ECP, M: ECP, r: BIG): { readonly c1: ECP; readonly c2: ECP } {
-    const c1 = g1.mul(r);
+    const c1 = this.g1.mul(r);
     const c2 = P.mul(r);
     c2.add(M);
     return { c1, c2 };
@@ -46,7 +52,7 @@ export class ElGamal1 implements ElGamal<ECP> {
    * in amcl. So `c2*c1^(-d) = c2/c1^d` is expressed as `c2-c1*d`.
    */
   public decrypt(d: FP, c1: ECP, c2: ECP): ECP {
-    const out = new ctx.ECP();
+    const out = new this.ctx.ECP();
     out.copy(c2);
     out.sub(c1.mul(d.f));
     return out;
@@ -67,8 +73,8 @@ export class ElGamal1 implements ElGamal<ECP> {
     messages: readonly ({ c1: ECP; c2: ECP })[],
     messageGenerator: () => BIG | undefined,
   ): BIG | undefined {
-    const sumComponent1 = new ctx.ECP();
-    const sumComponent2 = new ctx.ECP();
+    const sumComponent1 = new this.ctx.ECP();
+    const sumComponent2 = new this.ctx.ECP();
     for (const { c1, c2 } of messages) {
       sumComponent1.add(c1);
       sumComponent2.add(c2);
@@ -79,7 +85,7 @@ export class ElGamal1 implements ElGamal<ECP> {
 
     let msg: BIG | undefined;
     while ((msg = messageGenerator())) {
-      if (g1.mul(msg).equals(gm)) {
+      if (this.g1.mul(msg).equals(gm)) {
         return msg;
       }
     }
@@ -90,9 +96,17 @@ export class ElGamal1 implements ElGamal<ECP> {
 
 /** ElGamal on G2 */
 export class ElGamal2 implements ElGamal<ECP2> {
+  private readonly ctx: CTXWithCurvePF12;
+  private readonly g2: ECP2;
+
+  public constructor(ctx: CTXWithCurvePF12) {
+    this.ctx = ctx;
+    this.g2 = makeGeneratorsPF12(ctx).g2;
+  }
+
   public keyGen(rng: Rng): { pk: { P: ECP2 }; dk: { d: FP } } {
     const d = rng.makePointInZp();
-    const P = g2.mul(d.f);
+    const P = this.g2.mul(d.f);
     return {
       pk: { P },
       dk: { d },
@@ -100,14 +114,14 @@ export class ElGamal2 implements ElGamal<ECP2> {
   }
 
   public encrypt(P: ECP2, M: ECP2, r: BIG): { readonly c1: ECP2; readonly c2: ECP2 } {
-    const c1 = g2.mul(r);
+    const c1 = this.g2.mul(r);
     const c2 = P.mul(r);
     c2.add(M);
     return { c1, c2 };
   }
 
   public decrypt(d: FP, c1: ECP2, c2: ECP2): ECP2 {
-    const out = new ctx.ECP2();
+    const out = new this.ctx.ECP2();
     out.copy(c2);
     out.sub(c1.mul(d.f));
     return out;

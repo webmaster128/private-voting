@@ -1,7 +1,11 @@
+import { ElGamal1 } from "groth-sahai";
+
 import { PublicBallot } from "./Ballot";
+import { constants } from "./constants";
 import { ElectionDecryptionKey, ElectionKeypair, ElectionPubkey } from "./ElectionKeypair";
-import { ElGamal1 } from "./ElGamal";
 import { intToMessage, Message } from "./Message";
+
+const { ctx } = constants;
 
 export class Trustee {
   private readonly pk: ElectionPubkey;
@@ -24,7 +28,7 @@ export class Trustee {
 
     const { c1, c2 } = pb.c;
 
-    const F = new ElGamal1().decrypt(this.dk.d, c1, c2);
+    const F = new ElGamal1(ctx).decrypt(this.dk.d, c1, c2);
     for (const m of this.M) {
       if (this.pk.F(m).equals(F)) return m;
     }

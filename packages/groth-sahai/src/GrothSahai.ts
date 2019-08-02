@@ -1,11 +1,8 @@
-import { BIG, ECP, ECP2 } from "amcl-js";
+import { BIG, CTXWithCurvePF12, ECP, ECP2 } from "amcl-js";
 
-import { constants } from "./constants";
 import { e, fp12MatricesAdd, fp12MatricesEqual, FP12Matrix2x2 } from "./math";
 import { Rng } from "./Rng";
-import { range, same } from "./utils";
-
-const { ctx } = constants;
+import { makeGeneratorsPF12, range, same } from "./utils";
 
 /** Type of element in module B_1 = G1×G1 */
 export type B1 = readonly [ECP, ECP];
@@ -36,9 +33,11 @@ export interface CommonReferenceString {
   readonly v: CommitmentKeyInG2;
 }
 
-function makeCommitmentKeyForG1(rng: Rng): CommitmentKeyInG1 {
+function makeCommitmentKeyForG1(ctx: CTXWithCurvePF12, rng: Rng): CommitmentKeyInG1 {
+  const { g1 } = makeGeneratorsPF12(ctx);
+
   const u1: B1 = [
-    new ctx.ECP(constants.g1), // generator P
+    new ctx.ECP(g1), // generator P
     new ctx.ECP(rng.makePointInG1()), // a*P for random a and generator P
   ];
 
@@ -49,9 +48,11 @@ function makeCommitmentKeyForG1(rng: Rng): CommitmentKeyInG1 {
   return { u1, u2, t };
 }
 
-function makeCommitmentKeyForG2(rng: Rng): CommitmentKeyInG2 {
+function makeCommitmentKeyForG2(ctx: CTXWithCurvePF12, rng: Rng): CommitmentKeyInG2 {
+  const { g2 } = makeGeneratorsPF12(ctx);
+
   const v1: B2 = [
-    new ctx.ECP2(constants.g2), // generator P
+    new ctx.ECP2(g2), // generator P
     rng.makePointInG2(), // a*P for random a and generator P
   ];
 
@@ -70,10 +71,10 @@ function makeCommitmentKeyForG2(rng: Rng): CommitmentKeyInG2 {
  *
  * @returns a common reference string "CRS" in G1^4, G2^4
  */
-export function SetupGS(rng: Rng): CommonReferenceString {
+export function SetupGS(ctx: CTXWithCurvePF12, rng: Rng): CommonReferenceString {
   return {
-    u: makeCommitmentKeyForG1(rng),
-    v: makeCommitmentKeyForG2(rng),
+    u: makeCommitmentKeyForG1(ctx, rng),
+    v: makeCommitmentKeyForG2(ctx, rng),
   };
 }
 
@@ -103,6 +104,8 @@ export type GSProof = PiOnly | ThetaOnly | (PiOnly & ThetaOnly);
  *
  */
 export class GrothSahai {
+  private readonly ctx: CTXWithCurvePF12;
+
   /** Commitment key u = (u1, u2) in G1×G1 */
   private readonly u1: B1;
   /** Commitment key u = (u1, u2) in G1×G1 */
@@ -122,18 +125,21 @@ export class GrothSahai {
    */
   private readonly vaux: B2;
 
-  public constructor(crs: CommonReferenceString) {
+  public constructor(ctx: CTXWithCurvePF12, crs: CommonReferenceString) {
+    this.ctx = ctx;
+    const { g1, g2 } = makeGeneratorsPF12(ctx);
+
     this.u1 = crs.u.u1;
     this.u2 = crs.u.u2;
     this.v1 = crs.v.v1;
     this.v2 = crs.v.v2;
 
     const uaux2ndComponent = new ctx.ECP(crs.u.u2[1]);
-    uaux2ndComponent.add(constants.g1);
+    uaux2ndComponent.add(g1);
     this.uaux = [this.u2[0], uaux2ndComponent];
 
     const vaux2ndComponent = new ctx.ECP2(crs.v.v2[1]);
-    vaux2ndComponent.add(constants.g2);
+    vaux2ndComponent.add(g2);
     this.vaux = [this.v2[0], vaux2ndComponent];
   }
 
@@ -145,8 +151,8 @@ export class GrothSahai {
    * @param X a group element in G1
    */
   public iota1(X: ECP): B1 {
-    const infinity = new ctx.ECP();
-    return [infinity, new ctx.ECP(X)];
+    const infinity = new this.ctx.ECP();
+    return [infinity, new this.ctx.ECP(X)];
   }
 
   /**
@@ -157,8 +163,8 @@ export class GrothSahai {
    * @param Y a group element in G2
    */
   public iota2(Y: ECP2): B2 {
-    const infinity = new ctx.ECP2();
-    return [infinity, new ctx.ECP2(Y)];
+    const infinity = new this.ctx.ECP2();
+    return [infinity, new this.ctx.ECP2(Y)];
   }
 
   /**
@@ -187,7 +193,10 @@ export class GrothSahai {
    * @returns an element in B_T (B_T = GT×GT×GT×GT)
    */
   public F(X: B1, Y: B2): FP12Matrix2x2 {
-    return [[e(X[0], Y[0]), e(X[0], Y[1])], [e(X[1], Y[0]), e(X[1], Y[1])]];
+    return [
+      [e(this.ctx, X[0], Y[0]), e(this.ctx, X[0], Y[1])],
+      [e(this.ctx, X[1], Y[0]), e(this.ctx, X[1], Y[1])],
+    ];
   }
 
   /**
@@ -311,7 +320,7 @@ export class GrothSahai {
 
     // theta := s^T * iota1(A)
 
-    const zero: B1 = [new ctx.ECP(), new ctx.ECP()];
+    const zero: B1 = [new this.ctx.ECP(), new this.ctx.ECP()];
     const theta = A.reduce((current, _, i): B1 => {
       const iota = this.iota1(A[i]);
       current[0].add(iota[0].mul(s[i]));
@@ -337,7 +346,10 @@ export class GrothSahai {
 
     // pi := R^T * iotaPrime2(b)
 
-    const zero: Pi = [[new ctx.ECP2(), new ctx.ECP2()], [new ctx.ECP2(), new ctx.ECP2()]];
+    const zero: Pi = [
+      [new this.ctx.ECP2(), new this.ctx.ECP2()],
+      [new this.ctx.ECP2(), new this.ctx.ECP2()],
+    ];
     const pi = b.reduce((current, _, i): Pi => {
       const iota = this.iotaPrime2(b[i]);
       const [r1, r2] = R[i];
@@ -359,7 +371,10 @@ export class GrothSahai {
     T1: ECP,
     proof: ThetaOnly,
   ): boolean {
-    const zeroPi: Pi = [[new ctx.ECP2(), new ctx.ECP2()], [new ctx.ECP2(), new ctx.ECP2()]];
+    const zeroPi: Pi = [
+      [new this.ctx.ECP2(), new this.ctx.ECP2()],
+      [new this.ctx.ECP2(), new this.ctx.ECP2()],
+    ];
     return this.verifyMultiScalar(A, dPrime, [], [], T1, zeroPi, proof.theta);
   }
 
@@ -369,7 +384,7 @@ export class GrothSahai {
     T1: ECP,
     proof: PiOnly,
   ): boolean {
-    const zeroTheta: Theta = [new ctx.ECP(), new ctx.ECP()];
+    const zeroTheta: Theta = [new this.ctx.ECP(), new this.ctx.ECP()];
     return this.verifyMultiScalar([], [], c, b, T1, proof.pi, zeroTheta);
   }
 
@@ -402,16 +417,16 @@ export class GrothSahai {
         const y = ys[index];
         return thisClass.F(x, y);
       });
-      return fp12MatricesAdd(...summands);
+      return fp12MatricesAdd(thisClass.ctx, ...summands);
     }
 
     function iotaTildeT(Z: ECP): FP12Matrix2x2 {
-      return thisClass.F(thisClass.iota1(Z), thisClass.iotaPrime2(new ctx.BIG(1)));
+      return thisClass.F(thisClass.iota1(Z), thisClass.iotaPrime2(new thisClass.ctx.BIG(1)));
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function iotaHatT(Z: ECP2): FP12Matrix2x2 {
-      return thisClass.F(thisClass.iotaPrime1(new ctx.BIG(1)), thisClass.iota2(Z));
+      return thisClass.F(thisClass.iotaPrime1(new thisClass.ctx.BIG(1)), thisClass.iota2(Z));
     }
 
     const lhsParts = new Array<FP12Matrix2x2>();
@@ -427,8 +442,9 @@ export class GrothSahai {
     }
     // gamma is always 0 in our use case
 
-    const lhs = fp12MatricesAdd(...lhsParts);
+    const lhs = fp12MatricesAdd(this.ctx, ...lhsParts);
     const rhs = fp12MatricesAdd(
+      this.ctx,
       iotaTildeT(T1),
       dot([this.u1, this.u2], pi),
       this.F(theta, this.v1),

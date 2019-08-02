@@ -1,16 +1,18 @@
-import { BIG, ECP, ECP2 } from "amcl-js";
+import { BIG, CTX, ECP, ECP2 } from "amcl-js";
 
-import { constants } from "./constants";
 import { ElGamal1, ElGamal2 } from "./ElGamal";
 import { Rng } from "./Rng";
+import { makeGeneratorsPF12 } from "./utils";
 
-const { ctx, g1, g2, n } = constants;
+const ctx = new CTX("BN254CX");
+const { g1, g2 } = makeGeneratorsPF12(ctx);
+const n = new ctx.BIG().rcopy(ctx.ROM_CURVE.CURVE_Order);
 
 describe("ElGamal", () => {
-  const elgamal = new ElGamal1();
+  const elgamal = new ElGamal1(ctx);
 
   it("can encrypt and decrypt", () => {
-    const rng = new Rng(new Uint8Array([0x00, 0x11, 0x22]));
+    const rng = new Rng(ctx, new Uint8Array([0x00, 0x11, 0x22]));
     const keypair = elgamal.keyGen(rng);
 
     const nMinus1 = new ctx.BIG(n);
@@ -34,7 +36,7 @@ describe("ElGamal", () => {
   });
 
   it("can decrypt sum", () => {
-    const rng = new Rng(new Uint8Array([0x00, 0x11, 0x22]));
+    const rng = new Rng(ctx, new Uint8Array([0x00, 0x11, 0x22]));
     const keypair = elgamal.keyGen(rng);
 
     const messages: BIG[] = [
@@ -74,10 +76,10 @@ describe("ElGamal", () => {
 });
 
 describe("ElGamal2", () => {
-  const elgamal = new ElGamal2();
+  const elgamal = new ElGamal2(ctx);
 
   it("can encrypt and decrypt", () => {
-    const rng = new Rng(new Uint8Array([0x00, 0x11, 0x22]));
+    const rng = new Rng(ctx, new Uint8Array([0x00, 0x11, 0x22]));
     const keypair = elgamal.keyGen(rng);
 
     const nMinus1 = new ctx.BIG(n);

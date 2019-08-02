@@ -1,10 +1,8 @@
 import { BIG, ECP, ECP2, FP } from "amcl-js";
+import { ElGamal1, GrothSahai, Rng, SetupGS } from "groth-sahai";
 
 import { constants } from "./constants";
-import { ElGamal1 } from "./ElGamal";
-import { GrothSahai, SetupGS } from "./GrothSahai";
 import { Message } from "./Message";
-import { Rng } from "./Rng";
 
 const { ctx } = constants;
 
@@ -89,9 +87,9 @@ function Setup(rng: Rng, k: number): { readonly F: (m: Message) => ECP; readonly
  * An implementation of EKeyGen
  */
 export function makeElectionKeypair(rng: Rng, k: number): ElectionKeypair {
-  const crs = SetupGS(rng);
+  const crs = SetupGS(ctx, rng);
   const { F, pp } = Setup(rng, k);
-  const elgamalKeypair = new ElGamal1().keyGen(rng);
+  const elgamalKeypair = new ElGamal1(ctx).keyGen(rng);
 
   return {
     pk: {
@@ -99,7 +97,7 @@ export function makeElectionKeypair(rng: Rng, k: number): ElectionKeypair {
       ...pp,
       ...elgamalKeypair.pk,
       h: makeH(rng),
-      gs: new GrothSahai(crs),
+      gs: new GrothSahai(ctx, crs),
     },
     dk: { ...elgamalKeypair.dk },
   };

@@ -1,17 +1,21 @@
-import { constants } from "./constants";
+import { CTX } from "amcl-js";
+
 import { ElGamal1, ElGamal2 } from "./ElGamal";
 import { GrothSahai, SetupGS } from "./GrothSahai";
 import { e } from "./math";
 import { Rng } from "./Rng";
+import { makeGeneratorsPF12 } from "./utils";
 
-const { ctx, g1, g2, n } = constants;
+const ctx = new CTX("BN254CX");
+const { g1, g2 } = makeGeneratorsPF12(ctx);
+const n = new ctx.BIG().rcopy(ctx.ROM_CURVE.CURVE_Order);
 
 describe("GrothSahai", () => {
-  const rng = new Rng(new Uint8Array([0x00, 0x11, 0x22]));
-  const crs = SetupGS(rng);
+  const rng = new Rng(ctx, new Uint8Array([0x00, 0x11, 0x22]));
+  const crs = SetupGS(ctx, rng);
 
   it("can be constructed", () => {
-    const gs = new GrothSahai(crs);
+    const gs = new GrothSahai(ctx, crs);
     expect(gs).toBeTruthy();
   });
 
@@ -22,7 +26,7 @@ describe("GrothSahai", () => {
       const x = rng.makeFactor(); // random scalar
       const X = g1.mul(x);
 
-      const gs = new GrothSahai(crs);
+      const gs = new GrothSahai(ctx, crs);
       const [commitment] = gs.commitScalarInG1([x], [r]);
 
       // https://eprint.iacr.org/2007/155, 20160411:065033, page 24, "Commitments"
@@ -31,7 +35,7 @@ describe("GrothSahai", () => {
       elGamalFactor.add(r);
 
       const Q = crs.u.u1[1];
-      const { c1, c2 } = new ElGamal1().encrypt(Q, X, elGamalFactor);
+      const { c1, c2 } = new ElGamal1(ctx).encrypt(Q, X, elGamalFactor);
 
       expect(commitment[0].equals(c1)).toEqual(true);
       expect(commitment[1].equals(c2)).toEqual(true);
@@ -45,7 +49,7 @@ describe("GrothSahai", () => {
       const x = rng.makeFactor(); // random scalar
       const X = g2.mul(x);
 
-      const gs = new GrothSahai(crs);
+      const gs = new GrothSahai(ctx, crs);
       const [commitment] = gs.commitScalarInG2([x], [r]);
 
       // https://eprint.iacr.org/2007/155, 20160411:065033, page 24, "Commitments"
@@ -54,7 +58,7 @@ describe("GrothSahai", () => {
       elGamalFactor.add(r);
 
       const Q = crs.v.v1[1];
-      const { c1, c2 } = new ElGamal2().encrypt(Q, X, elGamalFactor);
+      const { c1, c2 } = new ElGamal2(ctx).encrypt(Q, X, elGamalFactor);
 
       expect(commitment[0].equals(c1)).toEqual(true);
       expect(commitment[1].equals(c2)).toEqual(true);
@@ -67,7 +71,7 @@ describe("GrothSahai", () => {
 
       const X = g1.mul(rng.makeFactor()); // random element in G1
 
-      const gs = new GrothSahai(crs);
+      const gs = new GrothSahai(ctx, crs);
       const [commitment] = gs.commitElementInG1([X], [[r1, r2]]);
 
       // https://eprint.iacr.org/2007/155, 20160411:065033, page 24, "Commitments"
@@ -76,7 +80,7 @@ describe("GrothSahai", () => {
       elGamalFactor.add(r1);
 
       const Q = crs.u.u1[1];
-      const { c1, c2 } = new ElGamal1().encrypt(Q, X, elGamalFactor);
+      const { c1, c2 } = new ElGamal1(ctx).encrypt(Q, X, elGamalFactor);
 
       expect(commitment[0].equals(c1)).toEqual(true);
       expect(commitment[1].equals(c2)).toEqual(true);
@@ -89,7 +93,7 @@ describe("GrothSahai", () => {
 
       const X = g2.mul(rng.makeFactor()); // random element in G2
 
-      const gs = new GrothSahai(crs);
+      const gs = new GrothSahai(ctx, crs);
       const [commitment] = gs.commitElementInG2([X], [[r1, r2]]);
 
       // https://eprint.iacr.org/2007/155, 20160411:065033, page 24, "Commitments"
@@ -98,7 +102,7 @@ describe("GrothSahai", () => {
       elGamalFactor.add(r1);
 
       const Q = crs.v.v1[1];
-      const { c1, c2 } = new ElGamal2().encrypt(Q, X, elGamalFactor);
+      const { c1, c2 } = new ElGamal2(ctx).encrypt(Q, X, elGamalFactor);
 
       expect(commitment[0].equals(c1)).toEqual(true);
       expect(commitment[1].equals(c2)).toEqual(true);
@@ -107,7 +111,7 @@ describe("GrothSahai", () => {
 
   it("has working iota1", () => {
     const X = g1.mul(rng.makeFactor());
-    const gs = new GrothSahai(crs);
+    const gs = new GrothSahai(ctx, crs);
     const result = gs.iota1(X);
     expect(result[0].is_infinity()).toEqual(true);
     expect(result[1].equals(X)).toEqual(true);
@@ -115,7 +119,7 @@ describe("GrothSahai", () => {
 
   it("has working iota2", () => {
     const Y = g2.mul(rng.makeFactor());
-    const gs = new GrothSahai(crs);
+    const gs = new GrothSahai(ctx, crs);
     const result = gs.iota2(Y);
     expect(result[0].is_infinity()).toEqual(true);
     expect(result[1].equals(Y)).toEqual(true);
@@ -126,12 +130,12 @@ describe("GrothSahai", () => {
       const X = g1.mul(rng.makeFactor());
       const Y = g2.mul(rng.makeFactor());
 
-      const gs = new GrothSahai(crs);
+      const gs = new GrothSahai(ctx, crs);
       const result = gs.F(gs.iota1(X), gs.iota2(Y));
       expect(result[0][0].isunity()).toEqual(true);
       expect(result[0][1].isunity()).toEqual(true);
       expect(result[1][0].isunity()).toEqual(true);
-      expect(result[1][1].equals(e(X, Y))).toEqual(true);
+      expect(result[1][1].equals(e(ctx, X, Y))).toEqual(true);
     });
 
     it("works for arbitrary elements", () => {
@@ -140,12 +144,12 @@ describe("GrothSahai", () => {
       const Y1 = g2.mul(rng.makeFactor());
       const Y2 = g2.mul(rng.makeFactor());
 
-      const gs = new GrothSahai(crs);
+      const gs = new GrothSahai(ctx, crs);
       const result = gs.F([X1, X2], [Y1, Y2]);
-      expect(result[0][0].equals(e(X1, Y1))).toEqual(true);
-      expect(result[0][1].equals(e(X1, Y2))).toEqual(true);
-      expect(result[1][0].equals(e(X2, Y1))).toEqual(true);
-      expect(result[1][1].equals(e(X2, Y2))).toEqual(true);
+      expect(result[0][0].equals(e(ctx, X1, Y1))).toEqual(true);
+      expect(result[0][1].equals(e(ctx, X1, Y2))).toEqual(true);
+      expect(result[1][0].equals(e(ctx, X2, Y1))).toEqual(true);
+      expect(result[1][1].equals(e(ctx, X2, Y2))).toEqual(true);
     });
 
     it("returns ones for infinity in one of the arguments", () => {
@@ -153,7 +157,7 @@ describe("GrothSahai", () => {
       const X2 = g1.mul(rng.makeFactor());
       const Y1 = g2.mul(rng.makeFactor());
       const Y2 = g2.mul(rng.makeFactor());
-      const gs = new GrothSahai(crs);
+      const gs = new GrothSahai(ctx, crs);
 
       {
         const result = gs.F([X1, X2], [new ctx.ECP2(), new ctx.ECP2()]);
@@ -175,7 +179,7 @@ describe("GrothSahai", () => {
 
   describe("proveMultiScalarLinear1", () => {
     it("has bijective property", () => {
-      const gs = new GrothSahai(crs);
+      const gs = new GrothSahai(ctx, crs);
       const s = rng.makeFactor();
       const A = g1.mul(rng.makeFactor()); // public constant
 
@@ -189,7 +193,7 @@ describe("GrothSahai", () => {
 
   describe("proveMultiScalarLinear2", () => {
     it("has bijective property", () => {
-      const gs = new GrothSahai(crs);
+      const gs = new GrothSahai(ctx, crs);
       const R = [rng.makeFactor(), rng.makeFactor()] as const;
       const b = rng.makeFactor(); // public constant
 
@@ -206,7 +210,7 @@ describe("GrothSahai", () => {
   });
 
   describe("proveMultiScalarLinear1/verifyMultiScalarLinear1", () => {
-    const gs = new GrothSahai(crs);
+    const gs = new GrothSahai(ctx, crs);
 
     it("can prove and verify secret constant y", () => {
       const y = rng.makeFactor(); // secret
@@ -250,7 +254,7 @@ describe("GrothSahai", () => {
   });
 
   describe("proveMultiScalarLinear2/verifyMultiScalarLinear2", () => {
-    const gs = new GrothSahai(crs);
+    const gs = new GrothSahai(ctx, crs);
 
     it("can prove and verify secret element X", () => {
       const X = g1.mul(rng.makeFactor()); // secret

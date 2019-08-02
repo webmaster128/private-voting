@@ -1,6 +1,6 @@
 import { ECP, ECP2 } from "amcl-js";
+import { B2, ThetaOnly } from "groth-sahai";
 
-import { B2, ThetaOnly } from "./GrothSahai";
 import { EncryptedVote, GSProofs, Sigma } from "./VoteEncryptor";
 
 export interface Ballot {

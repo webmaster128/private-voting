@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+import { Rng } from "groth-sahai";
+
 import { Ballot } from "./Ballot";
 import { BallotVerifier } from "./BallotVerifier";
 import { constants } from "./constants";
@@ -7,7 +9,6 @@ import { Message } from "./Message";
 import { PublicElection } from "./PublicElection";
 import { Publisher } from "./Publisher";
 import { Randomizer } from "./Randomizer";
-import { Rng } from "./Rng";
 import { Trustee } from "./Trustee";
 import { makeUserKeypair } from "./UserKeypair";
 import { VoteEncryptor } from "./VoteEncryptor";
@@ -28,7 +29,7 @@ describe("Belenios RF integrationtest", () => {
   });
 
   it("can do the full flow described in the paper", () => {
-    const rng = new Rng(defaultSeed);
+    const rng = new Rng(ctx, defaultSeed);
 
     const k = 2;
     const electionKeypair = makeElectionKeypair(rng, k);
