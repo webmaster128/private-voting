@@ -1,10 +1,9 @@
 import { BIG, ECP } from "amcl-js";
+import { B2, Rng, Theta, ThetaOnly } from "groth-sahai";
 
 import { Ballot } from "./Ballot";
 import { constants } from "./constants";
-import { B2, Theta, ThetaOnly } from "./GrothSahai";
 import { PublicElection } from "./PublicElection";
-import { Rng } from "./Rng";
 import { serializeVerificationKey, UserVerificationKey } from "./UserKeypair";
 
 const { ctx, g1, g2, n } = constants;

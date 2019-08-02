@@ -1,7 +1,8 @@
+import { e, ee } from "groth-sahai";
+
 import { Ballot } from "./Ballot";
 import { constants } from "./constants";
 import { ElectionPubkey } from "./ElectionKeypair";
-import { e, ee } from "./math";
 import { PublicElection } from "./PublicElection";
 import { serializeVerificationKey, UserVerificationKey } from "./UserKeypair";
 import { EncryptedVote, GSProofs } from "./VoteEncryptor";

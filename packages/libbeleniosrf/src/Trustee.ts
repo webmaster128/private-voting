@@ -1,6 +1,7 @@
+import { ElGamal1 } from "groth-sahai";
+
 import { PublicBallot } from "./Ballot";
 import { ElectionDecryptionKey, ElectionKeypair, ElectionPubkey } from "./ElectionKeypair";
-import { ElGamal1 } from "./ElGamal";
 import { intToMessage, Message } from "./Message";
 
 export class Trustee {

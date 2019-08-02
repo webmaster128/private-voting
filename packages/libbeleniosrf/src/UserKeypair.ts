@@ -1,7 +1,7 @@
 import { ECP, ECP2 } from "amcl-js";
+import { Rng } from "groth-sahai";
 
 import { PP } from "./ElectionKeypair";
-import { Rng } from "./Rng";
 
 export interface UserVerificationKey {
   readonly pp: PP;

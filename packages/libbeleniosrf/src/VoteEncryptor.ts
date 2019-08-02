@@ -1,18 +1,15 @@
 import { BIG, ECP, ECP2 } from "amcl-js";
+import { B2, ElGamal1, range, Rng, ThetaOnly } from "groth-sahai";
 
 import { constants } from "./constants";
-import { ElGamal1 } from "./ElGamal";
-import { B2, ThetaOnly } from "./GrothSahai";
 import { Message } from "./Message";
 import { PublicElection } from "./PublicElection";
-import { Rng } from "./Rng";
 import {
   serializeVerificationKey,
   UserKeypair,
   UserSigningKey,
   UserVerificationKey,
 } from "./UserKeypair";
-import { range } from "./utils";
 
 const { ctx, g1, g1Inverse } = constants;
 

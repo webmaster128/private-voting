@@ -1,10 +1,8 @@
 import { BIG, ECP, ECP2, FP } from "amcl-js";
+import { ElGamal1, GrothSahai, Rng, SetupGS } from "groth-sahai";
 
 import { constants } from "./constants";
-import { ElGamal1 } from "./ElGamal";
-import { GrothSahai, SetupGS } from "./GrothSahai";
 import { Message } from "./Message";
-import { Rng } from "./Rng";
 
 const { ctx } = constants;
 
