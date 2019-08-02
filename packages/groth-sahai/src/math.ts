@@ -1,4 +1,4 @@
-import { CTXWithCurvePF12, ECP, ECP2, FP12 } from "amcl-js";
+import { CTXWithCurvePF12, FP12 } from "amcl-js";
 
 export type FP12Matrix2x2 = readonly [readonly [FP12, FP12], readonly [FP12, FP12]];
 
@@ -34,19 +34,4 @@ export function fp12MatricesEqual(lhs: FP12Matrix2x2, rhs: FP12Matrix2x2): boole
     lhs[1][0].equals(rhs[1][0]) &&
     lhs[1][1].equals(rhs[1][1])
   );
-}
-
-/** Pairing e(P,Q) */
-export function e(ctx: CTXWithCurvePF12, P: ECP, Q: ECP2): FP12 {
-  // Special case for performance optimization
-  if (P.is_infinity() || Q.is_infinity()) {
-    return new ctx.FP12(1);
-  }
-
-  return ctx.PAIR.fexp(ctx.PAIR.ate(Q, P));
-}
-
-/** Double pairing e(P,Q)*e(R,S) */
-export function ee(ctx: CTXWithCurvePF12, P: ECP, Q: ECP2, R: ECP, S: ECP2): FP12 {
-  return ctx.PAIR.fexp(ctx.PAIR.ate2(Q, P, S, R));
 }

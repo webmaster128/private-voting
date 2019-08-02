@@ -1,6 +1,7 @@
 import { BIG, CTXWithCurvePF12, ECP, ECP2 } from "amcl-js";
 
-import { e, fp12MatricesAdd, fp12MatricesEqual, FP12Matrix2x2 } from "./math";
+import { fp12MatricesAdd, fp12MatricesEqual, FP12Matrix2x2 } from "./math";
+import { Pairings } from "./Pairings";
 import { Rng } from "./Rng";
 import { makeGeneratorsPF12, range, same } from "./utils";
 
@@ -193,9 +194,10 @@ export class GrothSahai {
    * @returns an element in B_T (B_T = GT×GT×GT×GT)
    */
   public F(X: B1, Y: B2): FP12Matrix2x2 {
+    const pairings = new Pairings(this.ctx);
     return [
-      [e(this.ctx, X[0], Y[0]), e(this.ctx, X[0], Y[1])],
-      [e(this.ctx, X[1], Y[0]), e(this.ctx, X[1], Y[1])],
+      [pairings.e(X[0], Y[0]), pairings.e(X[0], Y[1])],
+      [pairings.e(X[1], Y[0]), pairings.e(X[1], Y[1])],
     ];
   }
 
