@@ -2,14 +2,6 @@ import { CTXWithCurvePF12, FP12 } from "amcl-js";
 
 export type FP12Matrix2x2 = readonly [readonly [FP12, FP12], readonly [FP12, FP12]];
 
-export function fp12Add(ctx: CTXWithCurvePF12, A: FP12, B: FP12): FP12 {
-  const [a, b, c] = [A.geta(), A.getb(), A.getc()];
-  a.add(B.geta());
-  b.add(B.getb());
-  c.add(B.getc());
-  return new ctx.FP12(a, b, c);
-}
-
 export function fp12MatricesAdd(ctx: CTXWithCurvePF12, ...args: FP12Matrix2x2[]): FP12Matrix2x2 {
   const identity = [
     [new ctx.FP12(1), new ctx.FP12(1)],

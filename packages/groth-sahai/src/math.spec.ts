@@ -1,29 +1,8 @@
 import { CTX } from "amcl-js";
 
-import { fp12Add, fp12MatricesAdd, fp12MatricesEqual } from "./math";
+import { fp12MatricesAdd, fp12MatricesEqual } from "./math";
 
 const ctx = new CTX("BN254CX");
-
-describe("fp12Add", () => {
-  it("does component-wise addition", () => {
-    const a = new ctx.FP12(
-      new ctx.FP4(new ctx.FP2(100, 200), new ctx.FP2(300, 400)),
-      new ctx.FP4(new ctx.FP2(500, 600), new ctx.FP2(700, 800)),
-      new ctx.FP4(new ctx.FP2(900, 1000), new ctx.FP2(1100, 1200)),
-    );
-    const b = new ctx.FP12(
-      new ctx.FP4(new ctx.FP2(1, 2), new ctx.FP2(3, 4)),
-      new ctx.FP4(new ctx.FP2(5, 6), new ctx.FP2(7, 8)),
-      new ctx.FP4(new ctx.FP2(9, 10), new ctx.FP2(11, 12)),
-    );
-    const expectedSum = new ctx.FP12(
-      new ctx.FP4(new ctx.FP2(101, 202), new ctx.FP2(303, 404)),
-      new ctx.FP4(new ctx.FP2(505, 606), new ctx.FP2(707, 808)),
-      new ctx.FP4(new ctx.FP2(909, 1010), new ctx.FP2(1111, 1212)),
-    );
-    expect(fp12Add(ctx, a, b).equals(expectedSum)).toEqual(true);
-  });
-});
 
 describe("fp12MatricesAdd", () => {
   it("returns matrix of multiplicative identities for no argument", () => {
