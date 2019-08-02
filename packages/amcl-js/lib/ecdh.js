@@ -68,8 +68,8 @@ var ECDH = function(ctx) {
       var b = [],
         i;
 
-      for (i = 0; i < s.length; i++) {
-        b.push(s.charCodeAt(i));
+      for (i = 0; i < s.length; i += 2) {
+        b.push(parseInt(s.substr(i, 2), 16));
       }
 
       return b;
