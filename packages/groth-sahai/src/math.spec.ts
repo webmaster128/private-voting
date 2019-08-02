@@ -1,7 +1,10 @@
-import { constants } from "./constants";
-import { e, ee, fp12Add, fp12MatricesAdd, fp12MatricesEqual } from "./math";
+import { CTX } from "amcl-js";
 
-const { ctx, g1, g2 } = constants;
+import { e, ee, fp12Add, fp12MatricesAdd, fp12MatricesEqual } from "./math";
+import { makeGeneratorsPF12 } from "./utils";
+
+const ctx = new CTX("BN254CX");
+const { g1, g2 } = makeGeneratorsPF12(ctx);
 
 describe("fp12Add", () => {
   it("does component-wise addition", () => {
@@ -20,13 +23,13 @@ describe("fp12Add", () => {
       new ctx.FP4(new ctx.FP2(505, 606), new ctx.FP2(707, 808)),
       new ctx.FP4(new ctx.FP2(909, 1010), new ctx.FP2(1111, 1212)),
     );
-    expect(fp12Add(a, b).equals(expectedSum)).toEqual(true);
+    expect(fp12Add(ctx, a, b).equals(expectedSum)).toEqual(true);
   });
 });
 
 describe("fp12MatricesAdd", () => {
   it("returns matrix of multiplicative identities for no argument", () => {
-    const sum = fp12MatricesAdd();
+    const sum = fp12MatricesAdd(ctx);
     expect(sum[0][0].isunity()).toEqual(true);
     expect(sum[0][1].isunity()).toEqual(true);
     expect(sum[1][0].isunity()).toEqual(true);
@@ -36,7 +39,7 @@ describe("fp12MatricesAdd", () => {
   it("returns original for one argument", () => {
     const a = [[new ctx.FP12(11), new ctx.FP12(22)], [new ctx.FP12(33), new ctx.FP12(44)]] as const;
 
-    const sum = fp12MatricesAdd(a);
+    const sum = fp12MatricesAdd(ctx, a);
     expect(sum[0][0].equals(a[0][0])).toEqual(true);
     expect(sum[0][1].equals(a[0][1])).toEqual(true);
     expect(sum[1][0].equals(a[1][0])).toEqual(true);
@@ -54,7 +57,7 @@ describe("fp12MatricesAdd", () => {
       [new ctx.FP12(600), new ctx.FP12(1200)],
     ] as const;
 
-    const sum = fp12MatricesAdd(a, b);
+    const sum = fp12MatricesAdd(ctx, a, b);
     expect(sum[0][0].equals(expectedSum[0][0])).toEqual(true);
     expect(sum[0][1].equals(expectedSum[0][1])).toEqual(true);
     expect(sum[1][0].equals(expectedSum[1][0])).toEqual(true);
@@ -69,7 +72,7 @@ describe("fp12MatricesAdd", () => {
       [new ctx.FP12(12), new ctx.FP12(36)],
     ] as const;
 
-    const sum = fp12MatricesAdd(a, b, b);
+    const sum = fp12MatricesAdd(ctx, a, b, b);
     expect(sum[0][0].equals(expectedSum[0][0])).toEqual(true);
     expect(sum[0][1].equals(expectedSum[0][1])).toEqual(true);
     expect(sum[1][0].equals(expectedSum[1][0])).toEqual(true);
@@ -84,7 +87,7 @@ describe("fp12MatricesAdd", () => {
       [new ctx.FP12(24), new ctx.FP12(108)],
     ] as const;
 
-    const sum = fp12MatricesAdd(a, b, b, b);
+    const sum = fp12MatricesAdd(ctx, a, b, b, b);
     expect(sum[0][0].equals(expectedSum[0][0])).toEqual(true);
     expect(sum[0][1].equals(expectedSum[0][1])).toEqual(true);
     expect(sum[1][0].equals(expectedSum[1][0])).toEqual(true);
@@ -147,12 +150,12 @@ describe("e", () => {
     const bQ = Q.mul(b);
     const aQ = Q.mul(a);
     const bP = P.mul(b);
-    const eaPbQ = e(aP, bQ);
-    const ebPaQ = e(bP, aQ);
+    const eaPbQ = e(ctx, aP, bQ);
+    const ebPaQ = e(ctx, bP, aQ);
     expect(eaPbQ).toEqual(ebPaQ);
 
     // e(aP, bQ) == e(P,Q)^ab
-    const ePQ = e(P, Q);
+    const ePQ = e(ctx, P, Q);
     const ePGab = new ctx.FP12(ePQ).pow(a).pow(b);
     expect(eaPbQ).toEqual(ePGab);
   });
@@ -167,9 +170,9 @@ describe("e", () => {
     PR.copy(P);
     PR.add(R);
 
-    const ePRQ = e(PR, Q);
-    const ePQ = e(P, Q);
-    const eRQ = e(R, Q);
+    const ePRQ = e(ctx, PR, Q);
+    const ePQ = e(ctx, P, Q);
+    const eRQ = e(ctx, R, Q);
 
     const ePQeRQ = new ctx.FP12(ePQ); // the product e(P,Q)*e(R,Q)
     ePQeRQ.mul(eRQ);
@@ -186,9 +189,9 @@ describe("e", () => {
     QR.copy(Q);
     QR.add(R);
 
-    const ePQR = e(P, QR);
-    const ePQ = e(P, Q);
-    const ePR = e(P, R);
+    const ePQR = e(ctx, P, QR);
+    const ePQ = e(ctx, P, Q);
+    const ePR = e(ctx, P, R);
 
     const ePQePR = new ctx.FP12(ePQ); // the product e(P,Q)*e(P,R)
     ePQePR.mul(ePR);
@@ -200,7 +203,7 @@ describe("e", () => {
       // e(P, 0)
       const P = g1.mul(new ctx.BIG(5));
       const infinity = new ctx.ECP2();
-      const result = e(P, infinity);
+      const result = e(ctx, P, infinity);
       expect(result.isunity()).toEqual(true);
     }
 
@@ -208,7 +211,7 @@ describe("e", () => {
       // e(0, Q)
       const infinity = new ctx.ECP();
       const Q = g2.mul(new ctx.BIG(55));
-      const result = e(infinity, Q);
+      const result = e(ctx, infinity, Q);
       expect(result.isunity()).toEqual(true);
     }
 
@@ -216,7 +219,7 @@ describe("e", () => {
       // e(0, 0)
       const infinity1 = new ctx.ECP();
       const infinity2 = new ctx.ECP2();
-      const result = e(infinity1, infinity2);
+      const result = e(ctx, infinity1, infinity2);
       expect(result.isunity()).toEqual(true);
     }
   });
@@ -233,8 +236,8 @@ describe("ee", () => {
     PR.copy(P);
     PR.add(R);
 
-    const ePRQ = e(PR, Q);
-    const ePQeRQ = ee(P, Q, R, Q);
+    const ePRQ = e(ctx, PR, Q);
+    const ePQeRQ = ee(ctx, P, Q, R, Q);
     expect(ePRQ.equals(ePQeRQ)).toEqual(true);
   });
 
@@ -248,8 +251,8 @@ describe("ee", () => {
     QR.copy(Q);
     QR.add(R);
 
-    const ePQR = e(P, QR);
-    const ePQePR = ee(P, Q, P, R);
+    const ePQR = e(ctx, P, QR);
+    const ePQePR = ee(ctx, P, Q, P, R);
     expect(ePQR.equals(ePQePR)).toEqual(true);
   });
 });

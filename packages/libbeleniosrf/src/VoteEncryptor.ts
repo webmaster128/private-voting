@@ -93,7 +93,7 @@ export class VoteEncryptor {
     const r = this.rng.makeFactor();
 
     const FM = this.election.epk.F(m);
-    const { c1, c2 } = new ElGamal1().encrypt(this.election.epk.P, FM, r);
+    const { c1, c2 } = new ElGamal1(ctx).encrypt(this.election.epk.P, FM, r);
 
     // From paper:
     // vk = (pp, X_1 , X_2)

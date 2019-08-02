@@ -1,14 +1,24 @@
-import { BIG, ECP, ECP2, FP, RAND } from "amcl-js";
+import { BIG, CTXWithCurvePF12, ECP, ECP2, FP, RAND } from "amcl-js";
 
-import { constants } from "./constants";
-
-const { ctx, n, p, g1, g2 } = constants;
+import { makeGeneratorsPF12 } from "./utils";
 
 export class Rng {
+  private readonly ctx: CTXWithCurvePF12;
+  private readonly g1: ECP;
+  private readonly g2: ECP2;
+  private readonly n: BIG;
+  private readonly p: BIG;
   private readonly rng: RAND;
 
-  public constructor(seed: Uint8Array) {
-    const rng = new ctx.RAND();
+  public constructor(ctx: CTXWithCurvePF12, seed: Uint8Array) {
+    this.ctx = ctx;
+    const { g1, g2 } = makeGeneratorsPF12(ctx);
+    this.g1 = g1;
+    this.g2 = g2;
+    this.n = new this.ctx.BIG().rcopy(ctx.ROM_CURVE.CURVE_Order);
+    this.p = new this.ctx.BIG().rcopy(ctx.ROM_FIELD.Modulus);
+
+    const rng = new this.ctx.RAND();
     rng.clean();
     rng.seed(seed.length, seed);
     this.rng = rng;
@@ -18,21 +28,21 @@ export class Rng {
    * Random point in the finite field Z_p
    */
   public makePointInZp(): FP {
-    return new ctx.FP(ctx.BIG.randomnum(p, this.rng));
+    return new this.ctx.FP(this.ctx.BIG.randomnum(this.p, this.rng));
   }
 
   /**
    * Random factor a with a <= 0 < order of G1/G2
    */
   public makeFactor(): BIG {
-    return ctx.BIG.randomnum(n, this.rng);
+    return this.ctx.BIG.randomnum(this.n, this.rng);
   }
 
   /**
    * List of random factors a with a <= 0 < order of G1/G2
    */
   public makeFactors(count: number): readonly BIG[] {
-    return Array.from({ length: count }).map(() => ctx.BIG.randomnum(n, this.rng));
+    return Array.from({ length: count }).map(() => this.ctx.BIG.randomnum(this.n, this.rng));
   }
 
   /**
@@ -40,7 +50,7 @@ export class Rng {
    */
   public makePointInG1(): ECP {
     const r = this.makeFactor();
-    return g1.mul(r);
+    return this.g1.mul(r);
   }
 
   /**
@@ -48,6 +58,6 @@ export class Rng {
    */
   public makePointInG2(): ECP2 {
     const r = this.makeFactor();
-    return g2.mul(r);
+    return this.g2.mul(r);
   }
 }

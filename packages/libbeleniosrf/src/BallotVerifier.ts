@@ -28,16 +28,16 @@ export class BallotVerifier {
     if (!this.verifyProofs(vk, b.c)) return false;
 
     // test e(σ1, g2) = e(c1, σ4) from Verify+ (3a)
-    if (!e(sigma1, g2).equals(e(c1, sigma4))) return false;
+    if (!e(ctx, sigma1, g2).equals(e(ctx, c1, sigma4))) return false;
 
     // test e(σ2, g2) = e(z, X2) e(c2, σ4) from Verify+ (3b)
-    if (!e(sigma2, g2).equals(ee(z, X2, c2, sigma4))) return false;
+    if (!e(ctx, sigma2, g2).equals(ee(ctx, z, X2, c2, sigma4))) return false;
 
     // test e(σ3, g2) = e(g1, σ4) from Verify+ (3c)
-    if (!e(sigma3, g2).equals(e(g1, sigma4))) return false;
+    if (!e(ctx, sigma3, g2).equals(e(ctx, g1, sigma4))) return false;
 
     // test e(σ5, g2) = e(P, σ4) from Verify+ (3c)
-    if (!e(sigma5, g2).equals(e(P, sigma4))) return false;
+    if (!e(ctx, sigma5, g2).equals(e(ctx, P, sigma4))) return false;
 
     return true;
   }

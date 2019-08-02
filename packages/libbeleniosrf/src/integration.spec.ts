@@ -29,7 +29,7 @@ describe("Belenios RF integrationtest", () => {
   });
 
   it("can do the full flow described in the paper", () => {
-    const rng = new Rng(defaultSeed);
+    const rng = new Rng(ctx, defaultSeed);
 
     const k = 2;
     const electionKeypair = makeElectionKeypair(rng, k);

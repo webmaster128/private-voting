@@ -14,4 +14,4 @@ export {
   ThetaOnly,
 } from "./GrothSahai";
 export { e, ee } from "./math";
-export { range } from "./utils";
+export { makeGeneratorsPF12, range } from "./utils";
