@@ -2,12 +2,6 @@ import { CTXWithCurvePF12, FP12 } from "amcl-js";
 
 export type FP12Matrix2x2 = readonly [readonly [FP12, FP12], readonly [FP12, FP12]];
 
-function fp12One(ctx: CTXWithCurvePF12): FP12 {
-  const out = new ctx.FP12();
-  out.one();
-  return out;
-}
-
 export function fp12Add(ctx: CTXWithCurvePF12, A: FP12, B: FP12): FP12 {
   const [a, b, c] = [A.geta(), A.getb(), A.getc()];
   a.add(B.geta());
@@ -17,7 +11,12 @@ export function fp12Add(ctx: CTXWithCurvePF12, A: FP12, B: FP12): FP12 {
 }
 
 export function fp12MatricesAdd(ctx: CTXWithCurvePF12, ...args: FP12Matrix2x2[]): FP12Matrix2x2 {
-  const out = [[fp12One(ctx), fp12One(ctx)], [fp12One(ctx), fp12One(ctx)]] as const;
+  const identity = [
+    [new ctx.FP12(1), new ctx.FP12(1)],
+    [new ctx.FP12(1), new ctx.FP12(1)],
+  ] as const;
+
+  const out = identity;
   for (const factor of args) {
     out[0][0].mul(factor[0][0]);
     out[0][1].mul(factor[0][1]);
