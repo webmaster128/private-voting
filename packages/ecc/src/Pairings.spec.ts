@@ -73,6 +73,11 @@ describe("Pairings", () => {
       expect(ePQR.equals(ePQePR)).toEqual(true);
     });
 
+    it("satisfies e(g1, g2) != 1", () => {
+      const result = pairings.e(g1, g2);
+      expect(result.isunity()).toEqual(false);
+    });
+
     it("maps infinity to the neutral element", () => {
       {
         // e(P, 0)
