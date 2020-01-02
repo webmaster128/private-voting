@@ -64,6 +64,17 @@ var ECDH = function(ctx) {
       return s;
     },
 
+    asciitobytes: function(s) {
+      var b = [],
+        i;
+
+      for (i = 0; i < s.length; i++) {
+        b.push(s.charCodeAt(i));
+      }
+
+      return b;
+    },
+
     stringtobytes: function(s) {
       var b = [],
         i;
@@ -89,6 +100,8 @@ var ECDH = function(ctx) {
       } else if (sha == this.SHA512) {
         H = new ctx.HASH512();
       }
+
+      H.process_array(A);
 
       if (n > 0) {
         H.process_num(n);
