@@ -70,7 +70,7 @@ export class ElGamal1 implements ElGamal<ECP> {
    */
   public decryptSum(
     d: FP,
-    messages: readonly ({ c1: ECP; c2: ECP })[],
+    messages: readonly { c1: ECP; c2: ECP }[],
     messageGenerator: () => BIG | undefined,
   ): BIG | undefined {
     const sumComponent1 = new this.ctx.ECP();

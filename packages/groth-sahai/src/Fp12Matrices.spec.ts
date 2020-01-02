@@ -34,7 +34,10 @@ describe("Fp12Matrices", () => {
         [new ctx.FP12(100), new ctx.FP12(200)],
         [new ctx.FP12(300), new ctx.FP12(400)],
       ] as const;
-      const b = [[new ctx.FP12(0), new ctx.FP12(1)], [new ctx.FP12(2), new ctx.FP12(3)]] as const;
+      const b = [
+        [new ctx.FP12(0), new ctx.FP12(1)],
+        [new ctx.FP12(2), new ctx.FP12(3)],
+      ] as const;
       const expectedSum = [
         [new ctx.FP12(0), new ctx.FP12(200)],
         [new ctx.FP12(600), new ctx.FP12(1200)],
@@ -48,8 +51,14 @@ describe("Fp12Matrices", () => {
     });
 
     it("works for 3 arguments", () => {
-      const a = [[new ctx.FP12(1), new ctx.FP12(2)], [new ctx.FP12(3), new ctx.FP12(4)]] as const;
-      const b = [[new ctx.FP12(0), new ctx.FP12(1)], [new ctx.FP12(2), new ctx.FP12(3)]] as const;
+      const a = [
+        [new ctx.FP12(1), new ctx.FP12(2)],
+        [new ctx.FP12(3), new ctx.FP12(4)],
+      ] as const;
+      const b = [
+        [new ctx.FP12(0), new ctx.FP12(1)],
+        [new ctx.FP12(2), new ctx.FP12(3)],
+      ] as const;
       const expectedSum = [
         [new ctx.FP12(0), new ctx.FP12(2)],
         [new ctx.FP12(12), new ctx.FP12(36)],
@@ -63,8 +72,14 @@ describe("Fp12Matrices", () => {
     });
 
     it("works for 4 arguments", () => {
-      const a = [[new ctx.FP12(1), new ctx.FP12(2)], [new ctx.FP12(3), new ctx.FP12(4)]] as const;
-      const b = [[new ctx.FP12(0), new ctx.FP12(1)], [new ctx.FP12(2), new ctx.FP12(3)]] as const;
+      const a = [
+        [new ctx.FP12(1), new ctx.FP12(2)],
+        [new ctx.FP12(3), new ctx.FP12(4)],
+      ] as const;
+      const b = [
+        [new ctx.FP12(0), new ctx.FP12(1)],
+        [new ctx.FP12(2), new ctx.FP12(3)],
+      ] as const;
       const expectedSum = [
         [new ctx.FP12(0), new ctx.FP12(2)],
         [new ctx.FP12(24), new ctx.FP12(108)],
@@ -80,39 +95,72 @@ describe("Fp12Matrices", () => {
 
   describe("equal", () => {
     it("returns true for identical matrices", () => {
-      const a = [[new ctx.FP12(1), new ctx.FP12(2)], [new ctx.FP12(3), new ctx.FP12(4)]] as const;
+      const a = [
+        [new ctx.FP12(1), new ctx.FP12(2)],
+        [new ctx.FP12(3), new ctx.FP12(4)],
+      ] as const;
 
       expect(fp12Matrices.equal(a, a)).toEqual(true);
     });
 
     it("returns true for equal matrices", () => {
-      const a = [[new ctx.FP12(1), new ctx.FP12(2)], [new ctx.FP12(3), new ctx.FP12(4)]] as const;
-      const b = [[new ctx.FP12(1), new ctx.FP12(2)], [new ctx.FP12(3), new ctx.FP12(4)]] as const;
+      const a = [
+        [new ctx.FP12(1), new ctx.FP12(2)],
+        [new ctx.FP12(3), new ctx.FP12(4)],
+      ] as const;
+      const b = [
+        [new ctx.FP12(1), new ctx.FP12(2)],
+        [new ctx.FP12(3), new ctx.FP12(4)],
+      ] as const;
 
       expect(fp12Matrices.equal(a, b)).toEqual(true);
     });
 
     it("returns false for mismatch in cell 0,0", () => {
-      const a = [[new ctx.FP12(1), new ctx.FP12(2)], [new ctx.FP12(3), new ctx.FP12(4)]] as const;
-      const b = [[new ctx.FP12(0), new ctx.FP12(2)], [new ctx.FP12(3), new ctx.FP12(4)]] as const;
+      const a = [
+        [new ctx.FP12(1), new ctx.FP12(2)],
+        [new ctx.FP12(3), new ctx.FP12(4)],
+      ] as const;
+      const b = [
+        [new ctx.FP12(0), new ctx.FP12(2)],
+        [new ctx.FP12(3), new ctx.FP12(4)],
+      ] as const;
       expect(fp12Matrices.equal(a, b)).toEqual(false);
     });
 
     it("returns false for mismatch in cell 0,1", () => {
-      const a = [[new ctx.FP12(1), new ctx.FP12(2)], [new ctx.FP12(3), new ctx.FP12(4)]] as const;
-      const b = [[new ctx.FP12(1), new ctx.FP12(0)], [new ctx.FP12(3), new ctx.FP12(4)]] as const;
+      const a = [
+        [new ctx.FP12(1), new ctx.FP12(2)],
+        [new ctx.FP12(3), new ctx.FP12(4)],
+      ] as const;
+      const b = [
+        [new ctx.FP12(1), new ctx.FP12(0)],
+        [new ctx.FP12(3), new ctx.FP12(4)],
+      ] as const;
       expect(fp12Matrices.equal(a, b)).toEqual(false);
     });
 
     it("returns false for mismatch in cell 1,0", () => {
-      const a = [[new ctx.FP12(1), new ctx.FP12(2)], [new ctx.FP12(3), new ctx.FP12(4)]] as const;
-      const b = [[new ctx.FP12(1), new ctx.FP12(2)], [new ctx.FP12(0), new ctx.FP12(4)]] as const;
+      const a = [
+        [new ctx.FP12(1), new ctx.FP12(2)],
+        [new ctx.FP12(3), new ctx.FP12(4)],
+      ] as const;
+      const b = [
+        [new ctx.FP12(1), new ctx.FP12(2)],
+        [new ctx.FP12(0), new ctx.FP12(4)],
+      ] as const;
       expect(fp12Matrices.equal(a, b)).toEqual(false);
     });
 
     it("returns false for mismatch in cell 1,1", () => {
-      const a = [[new ctx.FP12(1), new ctx.FP12(2)], [new ctx.FP12(3), new ctx.FP12(4)]] as const;
-      const b = [[new ctx.FP12(1), new ctx.FP12(2)], [new ctx.FP12(3), new ctx.FP12(0)]] as const;
+      const a = [
+        [new ctx.FP12(1), new ctx.FP12(2)],
+        [new ctx.FP12(3), new ctx.FP12(4)],
+      ] as const;
+      const b = [
+        [new ctx.FP12(1), new ctx.FP12(2)],
+        [new ctx.FP12(3), new ctx.FP12(0)],
+      ] as const;
       expect(fp12Matrices.equal(a, b)).toEqual(false);
     });
   });
