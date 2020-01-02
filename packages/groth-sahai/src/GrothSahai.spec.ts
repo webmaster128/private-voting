@@ -199,7 +199,10 @@ describe("GrothSahai", () => {
       // pi = R^T*iotaPrime2(b) = iotaPrime2(R^T*b)
       const [r1ib1, r1ib2] = gs.iotaPrime2(ctx.BIG.modmul(R[0], b, n));
       const [r2ib1, r2ib2] = gs.iotaPrime2(ctx.BIG.modmul(R[1], b, n));
-      const iotaPrime2RTB = [[r1ib1, r1ib2], [r2ib1, r2ib2]] as const;
+      const iotaPrime2RTB = [
+        [r1ib1, r1ib2],
+        [r2ib1, r2ib2],
+      ] as const;
       const { pi } = gs.proveMultiScalarLinear2([b], [R]);
       expect(pi[0][0].equals(iotaPrime2RTB[0][0])).toEqual(true);
       expect(pi[0][1].equals(iotaPrime2RTB[0][1])).toEqual(true);
