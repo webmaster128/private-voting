@@ -1,9 +1,9 @@
-dist: xenial
+dist: bionic
 language: node_js
 node_js:
-  - "8"
   - "10"
   - "12"
+  - "13"
 
 # Override default install step
 install: true
